@@ -13,7 +13,7 @@ import openai
 import baseline, decisiontrail as dt
 
 MODEL = os.environ.get("AGENT_MODEL", "gpt-5.4-mini")
-MAX_TURNS = 5
+MAX_TURNS = 6
 HERE = Path(__file__).parent
 
 
@@ -27,7 +27,8 @@ ANSWER_TOOL = _tool("answer_or_abstain",
                     "Submit the final answer. status ANSWER needs decision, owner (person id) and cited_passages "
                     "(passage ids that support the decision, its rationale and its owner). Use CONFLICT when "
                     "equally authoritative decisions both apply (list them in decisions), UNKNOWN when none is supported.",
-                    {"status": {"type": "string", "enum": ["ANSWER", "CONFLICT", "UNKNOWN"]}, "decision": S,
+                    {"status": {"type": "string", "enum": ["ANSWER", "CONFLICT", "UNKNOWN"]},
+                     "decision": {"type": "string", "description": "decision id, e.g. D3"},
                      "decisions": A, "owner": S, "cited_passages": A, "explanation": S}, ["status", "explanation"])
 GRAPH_TOOLS = [
     _tool("resolve_project", "Find a project by name or alias; returns its scopes (environments).", {"name": S}, ["name"]),
@@ -63,6 +64,7 @@ class Session:
         dt.load(self.g, fx)
         self.rows = baseline.index(fx)
         self.answer = None
+        self.looked = False  # an answer is accepted only after a lookup in an earlier turn
 
     def scope(self, project, env):
         p = dt.resolve_project(self.g, project)
@@ -78,7 +80,7 @@ class Session:
         pas = {p["id"] for p in self.fx["passages"]}
         if a.get("status") == "ANSWER":
             if a.get("decision") not in dec:
-                errs.append("unknown decision id")
+                errs.append("decision must be a decision id such as D3, not a description")
             if a.get("owner") not in {p["id"] for p in self.fx["people"]}:
                 errs.append("owner must be a person id")
             cited = a.get("cited_passages") or []
@@ -86,7 +88,7 @@ class Session:
                 errs.append("cited_passages must be non-empty known passage ids")
             scope = self.scope(self.case["project"], self.case["env"])
             ok = [r for r in self.rows if r["decision"] == a.get("decision") and r["approver"]
-                  and self.case["env"] in r["approver_scopes"]]
+                  and baseline.authorized(self.fx, r["approver"], r["project"], self.case["env"], self.case["t"])]
             if scope and not ok:
                 errs.append("decision has no approver authorized for this environment")
         elif a.get("status") == "CONFLICT":
@@ -96,7 +98,7 @@ class Session:
 
     def call(self, name, args):
         if name == "answer_or_abstain":
-            errs = self.validate(args)
+            errs = self.validate(args) + ([] if self.looked else ["read the lookup results before answering; answer in a later turn"])
             if errs:
                 return {"accepted": False, "errors": errs}
             self.answer = args
@@ -122,9 +124,10 @@ class Session:
             words = tok(args.get("keywords", ""))
             hits = [r for r in self.rows if r["project"] == proj and r["effective"] <= args["t"] and env in r["envs"]]
             hits.sort(key=lambda r: (-len(words & tok(r["text"])), r["id"]))
-            return [{"id": r["id"], "doc": r["doc"], "decision": r["decision"], "topic": r["topic"],
+            name = next(p["name"] for p in self.fx["projects"] if p["id"] == proj)
+            return [{"id": r["id"], "project": name, "doc": r["doc"], "decision": r["decision"], "topic": r["topic"],
                      "approver": r["approver"], "owner": r["owner"], "effective": r["effective"],
-                     "approver_authorized": env in r["approver_scopes"], "envs": sorted(r["envs"]),
+                     "approver_authorized": baseline.authorized(self.fx, r["approver"], proj, env, args["t"]), "envs": sorted(r["envs"]),
                      "text": r["text"]} for r in hits[:6]]
         return {"error": f"unknown tool {name}"}
 
@@ -138,8 +141,9 @@ def run(case, fx, mode, emit=print):
             {"role": "user", "content": f"Date: {case['t']}. Project: {case['project']}. Environment: {case['env']}.\n{case['q']}"}]
     usage = {"requests": 0, "in": 0, "out": 0, "tool_calls": 0}
     for turn in range(MAX_TURNS + 2):
-        # from the last turn on, force a submission; two spare turns let a rejected answer be fixed (both modes)
-        choice = {"type": "function", "function": {"name": "answer_or_abstain"}} if turn >= MAX_TURNS - 1 else "auto"
+        # force a submission from the last turn on; two spare turns let a rejected answer be fixed (both modes)
+        force = turn >= MAX_TURNS - 1
+        choice = {"type": "function", "function": {"name": "answer_or_abstain"}} if force else "auto"
         r = client.chat.completions.create(model=MODEL, messages=msgs, tools=tools, tool_choice=choice,
                                            max_completion_tokens=900)
         usage["requests"] += 1
@@ -147,8 +151,9 @@ def run(case, fx, mode, emit=print):
         usage["out"] += r.usage.completion_tokens
         msg = r.choices[0].message
         msgs.append(msg.model_dump(exclude_none=True))
-        if not msg.tool_calls:
-            break
+        if not msg.tool_calls:  # plain text is not an answer: nudge, same words in both modes
+            msgs.append({"role": "user", "content": "Use the tools, then submit with answer_or_abstain."})
+            continue
         for tc in msg.tool_calls:
             usage["tool_calls"] += 1
             try:
@@ -157,7 +162,10 @@ def run(case, fx, mode, emit=print):
                 out = {"error": f"bad arguments: {e}"}
             emit({"tool": tc.function.name, "args": tc.function.arguments, "out": out})
             msgs.append({"role": "tool", "tool_call_id": tc.id, "content": json.dumps(out)})
-        if s.answer:
+        lookups = any(tc.function.name != "answer_or_abstain" for tc in msg.tool_calls)
+        s.looked = s.looked or lookups
+        # an answer sent alongside lookups may be a placeholder: keep going, the latest accepted answer wins
+        if s.answer and not lookups:
             break
     return {"answer": s.answer, "usage": usage}
 

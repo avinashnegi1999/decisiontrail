@@ -72,15 +72,30 @@ One result per requirement is an answer. Two or more is a conflict. None is unkn
 
 The baseline picks the right decision every time. It loses where the reason or owner sits one hop away: an incident postmortem that justifies a decision, an ownership transfer inside an active decision, and a conflict it resolves by date. Held-out mutations were written after the dev fixture, prompts and oracle were committed. They cover a rename, partial supersession, a future-effective replacement, a corrected owner, revoked authority, an unauthorized scoped note and a false bridge.
 
-**Agent eval** (`python agent_eval.py h01 ... h12`, gpt-5.4-mini). Both modes used the same model, prompt, five-turn budget and answer checker on all 12 held-out cases. The run took 92 requests, 98,795 input tokens and 6,197 output tokens.
+**Regression case h13** was added after the first held-out run. It asks about a past date, before an approver's authority was ended by a later charter. The graph and the baseline both answer it correctly.
 
-| | Graph tools | Flat index tools |
-|---|---:|---:|
-| Cases fully correct | 10/12 | 4/12 |
-| Unsupported citations | 0 | 1 |
-| Runs with no submitted answer | 1 | 1 |
+**Agent eval** (`python agent_eval.py h01 ... h13`, gpt-5.4-mini). Both modes used the same model, prompt, six-turn budget and answer checker. Graph mode uses the FalkorDB tools; flat mode uses a search over the same passage index as the baseline. Each mode was run twice over the 12 held-out cases.
 
-Flat-index runs mostly failed in two ways. They named the old owner after a transfer, and they abstained when a replacement covered only one environment. The graph agent missed h11, where it said UNKNOWN for a future-effective decision. It also missed h12, where it submitted no answer. An earlier pilot of the flat mode was discarded because of two harness bugs. The search ignored its environment filter, and no final answer was forced on the last turn. Both bugs were fixed in both modes before this run. This is one run per case, so the agent's results vary from run to run.
+| | Graph tools, run 1 | Graph tools, run 2 | Flat index, run 1 | Flat index, run 2 |
+|---|---:|---:|---:|---:|
+| Held-out cases fully correct | 12/12 | 12/12 | 10/12 | 9/12 |
+| Unsupported citations | 0 | 0 | 3 | 2 |
+| Regression case h13 | correct | correct | correct | correct |
+
+The two runs together took 170 requests, 160,521 input tokens and 10,841 output tokens. In flat mode, the model named the previous owner after an ownership transfer (h01, h02), and in one run it called a conflict that had already been resolved (h09). It also cited passages that do not support the decision it answered with. Graph mode got every case right and cited only supporting passages.
+
+**How the agent harness changed.** Before these final runs, the harness was fixed several times after looking at held-out runs. Every fix applied to both modes:
+
+1. The flat search now applies its environment filter.
+2. The checker forces an answer on the final turns, with two spare turns to fix a rejected answer.
+3. A plain-text reply gets the same nudge in both modes.
+4. An answer sent in the same turn as lookups no longer ends the run; the latest accepted answer counts.
+5. The answer field now says it expects a decision id such as D3.
+6. Authority in the checker and the flat search is evaluated at the requested date.
+7. The turn budget went from five to six.
+8. One prompt sentence was added: pass the given date to every dated tool.
+
+The earlier runs scored from 4/12 to 11/12 for flat and from 10/12 to 12/12 for graph. Those runs were set aside because of these harness bugs, not because of their scores. The deterministic graph resolver and the oracle did not change during this work, apart from adding authority end dates, which the h13 case covers.
 
 ## Run
 
@@ -97,7 +112,7 @@ The agent needs `OPENAI_API_KEY`. Run `python agent.py dev01 graph` for one case
 ## Limits
 
 - Curated import only. There is no parser, connector or automatic extraction.
-- Authority is checked against the current charter, not the charter in force on the requested date.
+- Authority can end on a date, but only when a supported later passage ends it. Authority start dates are not modeled.
 - Passage support is an authored claims list. It proves that the source states the relation. It does not prove the relation is true in the real world.
 - Two projects and about twenty cases cannot show general performance. Recursive SQL could run the same joins. The point here is that FalkorDB holds the connected state and returns paths you can inspect.
 

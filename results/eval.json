@@ -1213,5 +1213,79 @@
     }
    }
   ]
+ },
+ "regression": {
+  "ledger_vs_oracle_disagreements": [],
+  "graph": {
+   "cases_fully_correct": "1/1",
+   "status_correct": "1/1",
+   "current_decision_correct": "1/1",
+   "owner_correct": "1/1",
+   "rationale_passages_exact": "1/1",
+   "wrong_or_obsolete_answers": 0,
+   "correct_abstention": "0/0"
+  },
+  "baseline": {
+   "cases_fully_correct": "1/1",
+   "status_correct": "1/1",
+   "current_decision_correct": "1/1",
+   "owner_correct": "1/1",
+   "rationale_passages_exact": "1/1",
+   "wrong_or_obsolete_answers": 0,
+   "correct_abstention": "0/0"
+  },
+  "cases": [
+   {
+    "id": "h13",
+    "scope": "lumen/prod",
+    "t": "2026-03-01",
+    "req": "R4",
+    "expect": {
+     "status": "ANSWER",
+     "decision": "D6",
+     "owner": "eli",
+     "rationale": [
+      "P11"
+     ]
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "ANSWER",
+     "decision": "D6",
+     "owner": "eli",
+     "rationale": [
+      "P11"
+     ],
+     "evidence": [
+      "P08",
+      "P11"
+     ]
+    },
+    "baseline": {
+     "status": "ANSWER",
+     "decision": "D6",
+     "owner": "eli",
+     "rationale": [
+      "P11"
+     ]
+    },
+    "graph_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    }
+   }
+  ]
  }
 }

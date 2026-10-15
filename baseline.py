@@ -12,10 +12,6 @@ def index(fx):
     """One row per passage: project, effective date, envs named in the text,
     topic, approver, owner -- all from the same curated fixture."""
     dec = {d["id"]: d for d in fx["decisions"]}
-    claims = [c for p in fx["passages"] for c in p["claims"] if "|AUTHORIZED_FOR|" in c]
-    ended = {c[:-len("|ENDS")] for c in claims if c.endswith("|ENDS")}  # current charter only
-    auth = {(c.split("|")[0], c.split("|")[2]) for c in claims if not c.endswith("|ENDS") and c not in ended}
-    scope_env = {s["id"]: (s["project"], s["env"]) for s in fx["scopes"]}
     rows = []
     for p in fx["passages"]:
         get = lambda rel: [c.split("|")[2] for c in p["claims"] if f"|{rel}|" in c]
@@ -26,20 +22,28 @@ def index(fx):
                      "envs": {e for w, e in ENV_WORDS.items() if re.search(w, p["text"], re.I)},
                      "topic": (get("ADDRESSES") or [None])[0], "decision": (sorted(subj) or [None])[0],
                      "approver": approver, "owner": (get("OWNED_BY") or [None])[0],
-                     "approver_scopes": {scope_env[s][1] for a, s in auth if a == approver and s in scope_env
-                                         and scope_env[s][0] == p["project"]}})
+                     })
     return rows
 
 
-def search(rows, project, env, t, topic):
+def authorized(fx, person, project, env, t):
+    """Charter lookup at date t: a grant claim exists and no charter passage dated on or before t ends it."""
+    scope = next((s["id"] for s in fx["scopes"] if s["project"] == project and s["env"] == env), None)
+    grant = f"{person}|AUTHORIZED_FOR|{scope}"
+    ps = fx["passages"]
+    return (any(grant in p["claims"] for p in ps)
+            and not any(grant + "|ENDS" in p["claims"] and p["date"] <= t for p in ps))
+
+
+def search(fx, rows, project, env, t, topic):
     hits = [r for r in rows if r["project"] == project and r["topic"] == topic and env in r["envs"]
-            and r["effective"] <= t and env in r["approver_scopes"]]
+            and r["effective"] <= t and authorized(fx, r["approver"], project, env, t)]
     return sorted(hits, key=lambda r: r["effective"], reverse=True)
 
 
 def answer(fx, scope, t, req):
     project, env = next((s["project"], s["env"]) for s in fx["scopes"] if s["id"] == scope)
-    hits = search(index(fx), project, env, t, req)
+    hits = search(fx, index(fx), project, env, t, req)
     if not hits:
         return {"status": "UNKNOWN"}
     top = hits[0]

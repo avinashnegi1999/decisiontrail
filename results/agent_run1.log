@@ -1,0 +1,27 @@
+h01 graph correct=True status=ANSWER decision=D4 owner=eli cited=['P09', 'P15'] unsupported=[] usage={'requests': 4, 'in': 3226, 'out': 192, 'tool_calls': 5}
+h01 flat  correct=False status=ANSWER decision=D4 owner=dee cited=['P08', 'P09'] unsupported=[] usage={'requests': 2, 'in': 2829, 'out': 224, 'tool_calls': 4}
+h02 graph correct=True status=ANSWER decision=D4 owner=eli cited=['P09', 'P15'] unsupported=[] usage={'requests': 4, 'in': 3216, 'out': 259, 'tool_calls': 7}
+h02 flat  correct=False status=ANSWER decision=D4 owner=dee cited=['P08', 'P09'] unsupported=[] usage={'requests': 2, 'in': 1384, 'out': 154, 'tool_calls': 2}
+h03 graph correct=True status=ANSWER decision=D4 owner=dee cited=['P08', 'P09'] unsupported=[] usage={'requests': 4, 'in': 3521, 'out': 285, 'tool_calls': 8}
+h03 flat  correct=True status=ANSWER decision=D4 owner=dee cited=['P09'] unsupported=[] usage={'requests': 2, 'in': 2237, 'out': 168, 'tool_calls': 3}
+h04 graph correct=True status=ANSWER decision=D8 owner=ana cited=['P13'] unsupported=[] usage={'requests': 4, 'in': 3420, 'out': 249, 'tool_calls': 6}
+h04 flat  correct=True status=ANSWER decision=D8 owner=ana cited=['P01', 'P13'] unsupported=[] usage={'requests': 2, 'in': 2911, 'out': 260, 'tool_calls': 4}
+h05 graph correct=True status=ANSWER decision=D3 owner=ana cited=['P01', 'P06'] unsupported=[] usage={'requests': 5, 'in': 4430, 'out': 200, 'tool_calls': 5}
+h05 flat  correct=True status=ANSWER decision=D3 owner=ana cited=['P06'] unsupported=[] usage={'requests': 2, 'in': 1760, 'out': 122, 'tool_calls': 2}
+h06 graph correct=True status=ANSWER decision=D2 owner=ben cited=['P03', 'P04'] unsupported=[] usage={'requests': 4, 'in': 3332, 'out': 230, 'tool_calls': 5}
+h06 flat  correct=True status=ANSWER decision=D2 owner=ben cited=['P01', 'P03', 'P04'] unsupported=[] usage={'requests': 2, 'in': 1772, 'out': 188, 'tool_calls': 2}
+h07 graph correct=True status=ANSWER decision=D9 owner=ben cited=['P14'] unsupported=[] usage={'requests': 4, 'in': 3416, 'out': 198, 'tool_calls': 5}
+h07 flat  correct=True status=ANSWER decision=D9 owner=ben cited=['P01', 'P03', 'P14'] unsupported=['P03'] usage={'requests': 2, 'in': 1778, 'out': 177, 'tool_calls': 2}
+h08 graph correct=True status=ANSWER decision=D1 owner=ana cited=['P02'] unsupported=[] usage={'requests': 6, 'in': 5627, 'out': 228, 'tool_calls': 6}
+h08 flat  correct=True status=ANSWER decision=D1 owner=ana cited=['P01', 'P02'] unsupported=[] usage={'requests': 2, 'in': 2280, 'out': 201, 'tool_calls': 3}
+h09 graph correct=True status=ANSWER decision=D7 owner=fay cited=['P12'] unsupported=[] usage={'requests': 4, 'in': 3213, 'out': 202, 'tool_calls': 5}
+h09 flat  correct=True status=ANSWER decision=D7 owner=fay cited=['P12', 'P17'] unsupported=['P17'] usage={'requests': 2, 'in': 2818, 'out': 223, 'tool_calls': 4}
+h10 graph correct=True status=UNKNOWN decision=None owner=None cited=[] unsupported=[] usage={'requests': 3, 'in': 2048, 'out': 118, 'tool_calls': 3}
+h10 flat  correct=True status=UNKNOWN decision=None owner=None cited=[] unsupported=[] usage={'requests': 4, 'in': 3738, 'out': 228, 'tool_calls': 4}
+h11 graph correct=True status=ANSWER decision=D5 owner=dee cited=['P10'] unsupported=[] usage={'requests': 4, 'in': 3327, 'out': 210, 'tool_calls': 5}
+h11 flat  correct=True status=ANSWER decision=D5 owner=dee cited=['P08', 'P09', 'P10'] unsupported=['P09'] usage={'requests': 2, 'in': 3205, 'out': 246, 'tool_calls': 4}
+h12 graph correct=True status=ANSWER decision=D1 owner=ana cited=['P02'] unsupported=[] usage={'requests': 4, 'in': 3300, 'out': 213, 'tool_calls': 5}
+h12 flat  correct=True status=ANSWER decision=D1 owner=ana cited=['P01', 'P02'] unsupported=[] usage={'requests': 2, 'in': 1661, 'out': 163, 'tool_calls': 2}
+h13 graph correct=True status=ANSWER decision=D6 owner=eli cited=['P11'] unsupported=[] usage={'requests': 4, 'in': 3181, 'out': 195, 'tool_calls': 5}
+h13 flat  correct=True status=ANSWER decision=D6 owner=eli cited=['P11'] unsupported=[] usage={'requests': 3, 'in': 3173, 'out': 173, 'tool_calls': 4}
+total usage {'requests': 83, 'in': 76803, 'out': 5306}

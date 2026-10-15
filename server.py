@@ -28,8 +28,24 @@ def explain(w, cid):
     ans = dt.resolve(g, scope, c["t"], c["req"])
     app = dt.applicable_decisions(g, scope, c["t"])
     out = {"case": c, "scope": scope, "answer": ans,
-           "applicable": [a for a in app["applicable"] if a["req"] == c["req"]], "set_aside": app["set_aside"]}
+           "applicable": [a for a in app["applicable"] if a["req"] == c["req"]],
+           "set_aside": [x for x in app["set_aside"] if x["req"] == c["req"]]}
+    replaced = {r["target"]: a["decision"] for a in out["applicable"]
+                for r in dt.trail(g, scope, a["decision"]) if r["rel"] == "SUPERSEDES"}
+    for x in out["set_aside"]:
+        tr = dt.trail(g, scope, x["decision"])
+        has = lambda rel: any(r["rel"] == rel for r in tr)
+        x["reason"] = ("its cited source does not say it applies here" if not has("APPLIES_TO")
+                       else "approver has no authority here" if not has("AUTHORIZED_FOR")
+                       else f"replaced here by {replaced[x['decision']]}" if x["decision"] in replaced
+                       else "a link is not stated by its cited source")
+    if ans["status"] == "CONFLICT":
+        out["conflict"] = [{"decision": a["decision"], "title": a["title"],
+                            "trail": [r for r in dt.trail(g, scope, a["decision"]) if r["rel"] != "ADDRESSES"]}
+                           for a in out["applicable"]]
     if ans["status"] == "ANSWER":
+        out["trail"] = [r for r in dt.trail(g, scope, ans["decision"])
+                        if r["rel"] != "OWNED_BY" or r["target"] == ans["owner"]]
         out["rationale"] = dt.trace_rationale(g, ans["decision"])
         out["owner"] = dt.resolve_owner(g, ans["decision"], c["t"])
         out["passages"] = [dt.read_passage(g, p) for p in ans["evidence"]]

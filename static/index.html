@@ -5,26 +5,58 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DecisionTrail</title>
 <style>
-  :root { --bg:#fbfbfd; --fg:#1d1d1f; --mute:#6e6e73; --card:#fff; --line:#e5e5ea; --ok:#1a7f37; --warn:#b54708; --acc:#0066cc; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#111; --fg:#f5f5f7; --mute:#a1a1a6; --card:#1c1c1e; --line:#2c2c2e; --ok:#4ac26b; --warn:#f0a35e; --acc:#4da3ff; } }
-  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 -apple-system, "Segoe UI", system-ui, sans-serif; }
-  main { max-width:880px; margin:0 auto; padding:32px 16px; }
-  h1 { font-size:36px; margin:0; letter-spacing:-.02em; } .sub { color:var(--mute); margin:4px 0 24px; }
-  select, button { font:inherit; padding:8px 10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--fg); }
-  .row { display:flex; gap:8px; flex-wrap:wrap; } .row select { flex:1; min-width:0; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px; margin-top:16px; }
-  .status { font-weight:700; font-size:13px; letter-spacing:.06em; } .ANSWER { color:var(--ok); } .CONFLICT, .UNKNOWN { color:var(--warn); }
-  .big { font-size:22px; font-weight:600; margin:6px 0; } .mute { color:var(--mute); font-size:14px; }
-  .p { border-left:3px solid var(--acc); padding:4px 12px; margin:10px 0; } .p b { font-size:13px; color:var(--mute); }
-  code { font-size:13px; }
+  :root { --bg:#f5f5f7; --fg:#1d1d1f; --mute:#6e6e73; --card:#fff; --line:#e3e3e8; --soft:#f5f5f7;
+          --ok:#1a7f37; --okbg:#eaf6ed; --warn:#b54708; --warnbg:#fdf1e6; --bad:#c4002f; --badbg:#fdecef; --acc:#0066cc; --accbg:#e8f1fb; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#000; --fg:#f5f5f7; --mute:#a1a1a6; --card:#1c1c1e; --line:#2c2c2e; --soft:#2c2c2e;
+          --ok:#4ac26b; --okbg:#12261a; --warn:#f0a35e; --warnbg:#2b1d10; --bad:#ff6b81; --badbg:#2b1117; --acc:#4da3ff; --accbg:#0f2236; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing:antialiased; }
+  main { max-width:1180px; margin:0 auto; padding:28px 16px 48px; }
+  header { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  h1 { font-size:28px; margin:0; letter-spacing:-.02em; } .tag { color:var(--mute); font-size:15px; }
+  .controls { display:flex; gap:10px; margin:22px 0 18px; flex-wrap:wrap; }
+  .seg { display:inline-flex; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:3px; }
+  .seg button { font:inherit; font-size:14px; border:0; background:none; color:var(--mute); padding:6px 14px; border-radius:9px; cursor:pointer; }
+  .seg button[aria-pressed="true"] { background:var(--fg); color:var(--bg); }
+  select { flex:1; min-width:0; font:inherit; font-size:14px; padding:8px 12px; border-radius:12px; border:1px solid var(--line); background:var(--card); color:var(--fg); }
+  .q { font-size:30px; font-weight:600; letter-spacing:-.02em; line-height:1.25; margin:6px 0 10px; }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .chip { font-size:13px; padding:3px 10px; border-radius:999px; background:var(--card); border:1px solid var(--line); color:var(--mute); }
+  .grid { display:grid; grid-template-columns: 1fr 1.15fr; gap:16px; }
+  @media (max-width: 820px) { .grid { grid-template-columns:1fr; } .q { font-size:22px; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:20px 22px; }
+  .k { font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--mute); margin-bottom:10px; }
+  .pill { display:inline-block; font-size:12px; font-weight:800; letter-spacing:.08em; padding:3px 10px; border-radius:999px; }
+  .ANSWER { color:var(--ok); background:var(--okbg); } .CONFLICT, .UNKNOWN { color:var(--warn); background:var(--warnbg); }
+  .big { font-size:26px; font-weight:700; letter-spacing:-.02em; line-height:1.2; margin:12px 0 8px; }
+  .row2 { display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-top:1px solid var(--line); font-size:15px; }
+  .row2:first-of-type { border-top:0; }
+  .mute { color:var(--mute); }
+  blockquote { margin:14px 0 0; padding:12px 14px; background:var(--soft); border-radius:12px; font-size:15px; line-height:1.5; }
+  blockquote b { display:block; font-size:12px; color:var(--mute); margin-bottom:4px; }
+  .trail { display:grid; grid-template-columns: 116px 1fr auto; column-gap:12px; }
+  .trail > div { padding:9px 0; border-top:1px solid var(--line); font-size:15px; display:flex; align-items:center; }
+  .trail > .h { border-top:0; padding-top:0; }
+  .verb { color:var(--mute); }
+  .sub { font-weight:700; margin:14px 0 4px; } .sub:first-of-type { margin-top:0; }
+  .src { font:12px/1 ui-monospace, SFMono-Regular, Consolas, monospace; padding:5px 8px; border-radius:8px; background:var(--accbg); color:var(--acc); cursor:default; }
+  .ok { color:var(--ok); margin-right:6px; font-weight:700; }
+  .aside { display:grid; grid-template-columns: auto 1fr; gap:6px 14px; font-size:15px; }
+  .x { color:var(--bad); font-weight:700; }
+  .reason { color:var(--bad); }
+  .full { margin-top:16px; }
+  .p { padding:10px 0; border-top:1px solid var(--line); font-size:15px; } .p:first-of-type { border-top:0; }
+  .p.hl { background:var(--accbg); border-radius:10px; padding:10px 12px; border-top-color:transparent; }
+  .pid { font:12px ui-monospace, SFMono-Regular, Consolas, monospace; color:var(--acc); margin-right:8px; }
 </style>
 </head>
 <body>
 <main>
-  <h1>DecisionTrail</h1>
-  <p class="sub">Why does this project currently do this? Answers resolved in FalkorDB by authority, scope, effective date and source support.</p>
-  <div class="row">
-    <select id="w" aria-label="World"><option value="dev">Dev world</option><option value="heldout">Held-out world</option></select>
+  <header><h1>DecisionTrail</h1><span class="tag">Why does this project currently do this? Answered from FalkorDB, with a source for every link.</span></header>
+  <div class="controls">
+    <div class="seg" role="group" aria-label="World">
+      <button id="wdev" aria-pressed="true">Dev world</button><button id="wheld" aria-pressed="false">Held-out world</button>
+    </div>
     <select id="c" aria-label="Question"></select>
   </div>
   <div id="out"></div>
@@ -32,38 +64,56 @@
 <script>
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-let cases = {};
-async function load() {
-  cases = await (await fetch("/api/cases")).json();
-  fill();
-}
-function fill() {
-  $("c").innerHTML = cases[$("w").value].map(c => `<option value="${c.id}">${esc(c.id)}: ${esc(c.q)}</option>`).join("");
-  ask();
+const VERB = {APPLIES_TO:"applies to", APPROVED_BY:"approved by", AUTHORIZED_FOR:"authority", SUPERSEDES:"replaces",
+              SUPPORTED_BY:"because", OWNED_BY:"owned by", ADDRESSES:"answers"};
+let cases = {}, world = "dev";
+async function load() { cases = await (await fetch("/api/cases")).json(); fill(); }
+function setWorld(w) { world = w; $("wdev").setAttribute("aria-pressed", w === "dev"); $("wheld").setAttribute("aria-pressed", w !== "dev"); return fill(); }
+function fill(sel) {
+  $("c").innerHTML = cases[world].map(c => `<option value="${c.id}">${esc(c.id)} · ${esc(c.q)}</option>`).join("");
+  if (sel) $("c").value = sel;
+  return ask();
 }
 async function ask() {
-  const r = await (await fetch(`/api/answer?w=${$("w").value}&c=${$("c").value}`)).json();
-  const a = r.answer, c = r.case;
-  let h = `<div class="card"><div class="status ${a.status}">${a.status}</div>`;
+  const r = await (await fetch(`/api/answer?w=${world}&c=${$("c").value}`)).json();
+  const a = r.answer, c = r.case, env = r.scope.split("/")[1];
+  let h = `<div class="q">${esc(c.q)}</div><div class="chips"><span class="chip">${esc(c.project)}</span><span class="chip">${esc(c.env)}</span><span class="chip">as of ${c.t}</span></div><div class="grid">`;
+  // answer
+  h += `<div class="card" id="answer"><span class="pill ${a.status}">${a.status}</span>`;
   if (a.status === "ANSWER") {
-    h += `<div class="big">${esc(r.applicable[0].title)} <span class="mute">(${a.decision})</span></div>
-      <div>Owner: <b>${esc(r.owner.name)}</b> <span class="mute">per ${r.owner.passage}</span></div>
-      <div class="mute">${esc(r.scope)} at ${c.t}. Requirement: ${esc(r.applicable[0].requirement)}</div>`;
-    if (r.rationale.replaces.length) h += `<div class="mute">Replaces ${r.rationale.replaces.map(x => `${x.replaced} in ${x.scope} (${x.passage})`).join(", ")}</div>`;
+    const ap = r.applicable[0];
+    h += `<div class="big">${esc(ap.title)}</div>
+      <div class="row2"><span class="mute">Owner</span><b>${esc(r.owner.name)}</b></div>
+      <div class="row2"><span class="mute">Decision</span><span>${a.decision} · in effect since ${ap.effective_from}</span></div>`;
+    for (const p of r.rationale.rationale) h += `<blockquote id="why"><b>Why · ${p.passage} · ${esc(p.doc)}</b>${esc(p.text)}</blockquote>`;
   } else if (a.status === "CONFLICT") {
-    h += `<div class="big">Equally authoritative decisions disagree</div><div>${r.applicable.map(x => `${x.decision} ${esc(x.title)} (approved by ${x.approvers})`).join("<br>")}</div>`;
+    h += `<div class="big">Two approved decisions disagree</div>` +
+      r.conflict.map(x => `<div class="row2"><span>${esc(x.title)}</span><span class="mute">approved by ${esc(x.trail.filter(t => t.rel === "APPROVED_BY").map(t => t.label).join(", "))}</span></div>`).join("") +
+      `<p class="mute">Both apply with equal authority. No tie-breaker is invented: ask the owners.</p>`;
   } else {
-    h += `<div class="big">No supported decision applies</div>`;
+    h += `<div class="big">No supported decision applies</div><p class="mute">Nothing that applies here passes the authority, scope and source checks.</p>`;
   }
-  if (r.set_aside.length) h += `<div class="mute" style="margin-top:8px">Set aside: ${r.set_aside.map(x => `${x.decision} ${esc(x.title)}`).join("; ")}</div>`;
   h += `</div>`;
-  if (a.status === "ANSWER") {
-    h += `<div class="card"><div class="status">WHY</div>${r.rationale.rationale.map(p => `<div class="p"><b>${p.passage} · ${esc(p.doc)} ${p.rev}</b><br>${esc(p.text)}</div>`).join("")}</div>`;
-    h += `<div class="card"><div class="status">EVIDENCE CHAIN</div>${r.passages.map(p => `<div class="p"><b>${p.id} · ${esc(p.doc)} ${p.rev}</b><br>${esc(p.text)}</div>`).join("")}</div>`;
-  }
+  // trail
+  h += `<div class="card" id="trail"><div class="k">The trail · every link and the passage that states it</div>`;
+  const rowsOf = tr => `<div class="trail">` + tr.filter(t => t.rel !== "ADDRESSES").map(t =>
+      `<div class="verb" data-rel="${t.rel}">${VERB[t.rel]}</div><div data-rel="${t.rel}"><span class="ok">✓</span>${esc(t.rel === "APPLIES_TO" ? c.project + " · " + t.label : ["SUPERSEDES", "SUPPORTED_BY"].includes(t.rel) ? t.target + " · " + t.label : t.label)}</div><div data-rel="${t.rel}"><span class="src" data-p="${t.passage}">${t.passage}</span></div>`).join("") + `</div>`;
+  if (r.trail) h += rowsOf(r.trail);
+  else if (r.conflict) h += r.conflict.map(x => `<div class="sub">${x.decision} · ${esc(x.title)}</div>` + rowsOf(x.trail)).join("");
+  else h += `<p class="mute">No decision has a complete, supported trail here.</p>`;
+  h += `</div></div>`;
+  if (r.set_aside.length) h += `<div class="card full" id="setaside"><div class="k">Set aside · claims to apply here, but does not count</div><div class="aside">` +
+    r.set_aside.map(x => `<span class="x">✕</span><span><b>${esc(x.title)}</b> <span class="mute">${x.decision}, from ${x.effective_from}</span> · <span class="reason">${esc(x.reason)}</span></span>`).join("") + `</div></div>`;
+  if (r.passages) h += `<div class="card full" id="sources"><div class="k">Sources</div>` +
+    r.passages.map(p => `<div class="p" data-p="${p.id}"><span class="pid">${p.id}</span><b>${esc(p.doc)}</b> <span class="mute">${p.rev}</span><br>${esc(p.text)}</div>`).join("") + `</div>`;
   $("out").innerHTML = h;
+  document.querySelectorAll(".src").forEach(s => {
+    s.onmouseenter = () => document.querySelectorAll(`.p[data-p="${s.dataset.p}"]`).forEach(p => p.classList.add("hl"));
+    s.onmouseleave = () => document.querySelectorAll(".p.hl").forEach(p => p.classList.remove("hl"));
+  });
 }
-$("w").onchange = fill; $("c").onchange = ask;
+$("wdev").onclick = () => setWorld("dev"); $("wheld").onclick = () => setWorld("heldout"); $("c").onchange = ask;
+window.DT = { setWorld, fill, ask, select: (w, id) => { world = w; $("wdev").setAttribute("aria-pressed", w === "dev"); $("wheld").setAttribute("aria-pressed", w !== "dev"); return fill(id); } };
 load();
 </script>
 </body>

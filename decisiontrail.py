@@ -105,7 +105,8 @@ ORDER BY req, decision
 CONSIDERED = """
 MATCH (s:Scope {id:$scope})<-[a:APPLIES_TO]-(d:Decision)
 WHERE d.from <= $t AND (d.to IS NULL OR $t < d.to)
-RETURN DISTINCT d.id AS decision, d.title AS title, d.from AS effective_from ORDER BY decision
+OPTIONAL MATCH (d)-[:ADDRESSES]->(r:Requirement)
+RETURN DISTINCT d.id AS decision, d.title AS title, d.from AS effective_from, r.id AS req ORDER BY decision
 """
 
 OWNER = """
@@ -177,6 +178,32 @@ def resolve_owner(g, d, t):
     if len({o["person"] for o in top}) > 1:
         return {"decision": d, "owner": None, "reason": "conflicting owners", "candidates": top}
     return {"decision": d, "owner": top[0]["person"], "name": top[0]["name"], "passage": top[0]["passage"]}
+
+
+TRAIL = """
+MATCH (d:Decision {id:$d})-[e]->(x)
+WHERE type(e) IN ['APPLIES_TO','APPROVED_BY','OWNED_BY','ADDRESSES','SUPERSEDES','SUPPORTED_BY']
+WITH d, e, x
+MATCH (sp:Passage) WHERE sp.id = e.src
+  AND d.id+'|'+type(e)+'|'+x.id + CASE WHEN type(e) = 'SUPERSEDES' THEN '@'+e.scope ELSE '' END IN sp.claims
+RETURN type(e) AS rel, x.id AS target, coalesce(x.name, x.title, x.doc, x.text, x.env) AS label,
+       e.scope AS scope, e.from AS since, sp.id AS passage
+UNION
+MATCH (d:Decision {id:$d})-[:APPROVED_BY]->(p:Person)-[z:AUTHORIZED_FOR]->(s:Scope {id:$scope})
+WITH p, z, s
+MATCH (zp:Passage) WHERE zp.id = z.src AND p.id+'|AUTHORIZED_FOR|'+s.id IN zp.claims
+RETURN 'AUTHORIZED_FOR' AS rel, s.id AS target, p.name + ' for ' + s.env AS label,
+       null AS scope, null AS since, zp.id AS passage
+"""
+
+
+def trail(g, scope, d):
+    """Every supported link behind decision d in this scope, each with the passage that states it."""
+    out = rows(g, TRAIL, {"d": d, "scope": scope})
+    keep = lambda r: ((r["rel"] != "APPLIES_TO" or r["target"] == scope)
+                      and (r["rel"] != "SUPERSEDES" or r["scope"] == scope))
+    order = ["APPLIES_TO", "APPROVED_BY", "AUTHORIZED_FOR", "SUPERSEDES", "SUPPORTED_BY", "OWNED_BY", "ADDRESSES"]
+    return sorted(filter(keep, out), key=lambda r: (order.index(r["rel"]), r["target"]))
 
 
 def resolve(g, scope, t, req):

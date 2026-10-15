@@ -1,0 +1,188 @@
+{
+ "total_usage": {
+  "requests": 29,
+  "in": 36018,
+  "out": 1867
+ },
+ "runs": [
+  {
+   "case": "h04",
+   "mode": "graph",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D8",
+    "owner": "ana",
+    "cited_passages": [
+     "P13"
+    ],
+    "explanation": "Harbor staging users currently sign in with passkeys. This is the approved staging-only replacement for the earlier OIDC sign-in decision, effective 2026-06-01, to trial phishing-resistant login. The accountable owner is Ana Ruiz (ana)."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 4,
+    "in": 3168,
+    "out": 204,
+    "tool_calls": 5
+   }
+  },
+  {
+   "case": "h04",
+   "mode": "flat",
+   "answer": {
+    "status": "NONE"
+   },
+   "correct": false,
+   "grade": {
+    "status": false,
+    "decision": false,
+    "owner": false,
+    "rationale": false,
+    "wrong_answer": false,
+    "all": false
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 5,
+    "in": 8920,
+    "out": 404,
+    "tool_calls": 6
+   }
+  },
+  {
+   "case": "h01",
+   "mode": "graph",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D4",
+    "owner": "eli",
+    "cited_passages": [
+     "P08",
+     "P09",
+     "P15"
+    ],
+    "explanation": "Beacon maps to the Lumen project, and in production the applicable approved decision is D4, which stores web sessions in Redis. The rationale says this is because sessions must survive a web server restart. The current accountable owner for D4 at 2026-10-15 is Eli Varga."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 4,
+    "in": 3198,
+    "out": 259,
+    "tool_calls": 6
+   }
+  },
+  {
+   "case": "h01",
+   "mode": "flat",
+   "answer": {
+    "status": "NONE"
+   },
+   "correct": false,
+   "grade": {
+    "status": false,
+    "decision": false,
+    "owner": false,
+    "rationale": false,
+    "wrong_answer": false,
+    "all": false
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 5,
+    "in": 9478,
+    "out": 376,
+    "tool_calls": 7
+   }
+  },
+  {
+   "case": "h09",
+   "mode": "graph",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D7",
+    "owner": "fay",
+    "cited_passages": [
+     "P12"
+    ],
+    "explanation": "Beacon maps to Lumen production. The currently applicable release decision is D7, which sets production releases to daily behind feature flags effective 2026-05-01. That decision is approved and owned by Fay Osei."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 4,
+    "in": 3053,
+    "out": 197,
+    "tool_calls": 5
+   }
+  },
+  {
+   "case": "h09",
+   "mode": "flat",
+   "answer": {
+    "status": "NONE"
+   },
+   "correct": false,
+   "grade": {
+    "status": false,
+    "decision": false,
+    "owner": false,
+    "rationale": false,
+    "wrong_answer": false,
+    "all": false
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 4,
+    "in": 6273,
+    "out": 315,
+    "tool_calls": 4
+   }
+  },
+  {
+   "case": "h10",
+   "mode": "graph",
+   "answer": {
+    "status": "UNKNOWN",
+    "explanation": "No supported decision about Beacon staging release frequency is currently applicable for 2026-10-15. The only applicable decision returned is unrelated, and the release-frequency decision was set aside."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 3,
+    "in": 1928,
+    "out": 112,
+    "tool_calls": 3
+   }
+  }
+ ]
+}

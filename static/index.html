@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DecisionTrail</title>
+<style>
+  :root { --bg:#fbfbfd; --fg:#1d1d1f; --mute:#6e6e73; --card:#fff; --line:#e5e5ea; --ok:#1a7f37; --warn:#b54708; --acc:#0066cc; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#111; --fg:#f5f5f7; --mute:#a1a1a6; --card:#1c1c1e; --line:#2c2c2e; --ok:#4ac26b; --warn:#f0a35e; --acc:#4da3ff; } }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 -apple-system, "Segoe UI", system-ui, sans-serif; }
+  main { max-width:880px; margin:0 auto; padding:32px 16px; }
+  h1 { font-size:36px; margin:0; letter-spacing:-.02em; } .sub { color:var(--mute); margin:4px 0 24px; }
+  select, button { font:inherit; padding:8px 10px; border-radius:10px; border:1px solid var(--line); background:var(--card); color:var(--fg); }
+  .row { display:flex; gap:8px; flex-wrap:wrap; } .row select { flex:1; min-width:0; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 20px; margin-top:16px; }
+  .status { font-weight:700; font-size:13px; letter-spacing:.06em; } .ANSWER { color:var(--ok); } .CONFLICT, .UNKNOWN { color:var(--warn); }
+  .big { font-size:22px; font-weight:600; margin:6px 0; } .mute { color:var(--mute); font-size:14px; }
+  .p { border-left:3px solid var(--acc); padding:4px 12px; margin:10px 0; } .p b { font-size:13px; color:var(--mute); }
+  code { font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>DecisionTrail</h1>
+  <p class="sub">Why does this project currently do this? Answers resolved in FalkorDB by authority, scope, effective date and source support.</p>
+  <div class="row">
+    <select id="w" aria-label="World"><option value="dev">Dev world</option><option value="heldout">Held-out world</option></select>
+    <select id="c" aria-label="Question"></select>
+  </div>
+  <div id="out"></div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let cases = {};
+async function load() {
+  cases = await (await fetch("/api/cases")).json();
+  fill();
+}
+function fill() {
+  $("c").innerHTML = cases[$("w").value].map(c => `<option value="${c.id}">${esc(c.id)}: ${esc(c.q)}</option>`).join("");
+  ask();
+}
+async function ask() {
+  const r = await (await fetch(`/api/answer?w=${$("w").value}&c=${$("c").value}`)).json();
+  const a = r.answer, c = r.case;
+  let h = `<div class="card"><div class="status ${a.status}">${a.status}</div>`;
+  if (a.status === "ANSWER") {
+    h += `<div class="big">${esc(r.applicable[0].title)} <span class="mute">(${a.decision})</span></div>
+      <div>Owner: <b>${esc(r.owner.name)}</b> <span class="mute">per ${r.owner.passage}</span></div>
+      <div class="mute">${esc(r.scope)} at ${c.t}. Requirement: ${esc(r.applicable[0].requirement)}</div>`;
+    if (r.rationale.replaces.length) h += `<div class="mute">Replaces ${r.rationale.replaces.map(x => `${x.replaced} in ${x.scope} (${x.passage})`).join(", ")}</div>`;
+  } else if (a.status === "CONFLICT") {
+    h += `<div class="big">Equally authoritative decisions disagree</div><div>${r.applicable.map(x => `${x.decision} ${esc(x.title)} (approved by ${x.approvers})`).join("<br>")}</div>`;
+  } else {
+    h += `<div class="big">No supported decision applies</div>`;
+  }
+  if (r.set_aside.length) h += `<div class="mute" style="margin-top:8px">Set aside: ${r.set_aside.map(x => `${x.decision} ${esc(x.title)}`).join("; ")}</div>`;
+  h += `</div>`;
+  if (a.status === "ANSWER") {
+    h += `<div class="card"><div class="status">WHY</div>${r.rationale.rationale.map(p => `<div class="p"><b>${p.passage} · ${esc(p.doc)} ${p.rev}</b><br>${esc(p.text)}</div>`).join("")}</div>`;
+    h += `<div class="card"><div class="status">EVIDENCE CHAIN</div>${r.passages.map(p => `<div class="p"><b>${p.id} · ${esc(p.doc)} ${p.rev}</b><br>${esc(p.text)}</div>`).join("")}</div>`;
+  }
+  $("out").innerHTML = h;
+}
+$("w").onchange = fill; $("c").onchange = ask;
+load();
+</script>
+</body>
+</html>

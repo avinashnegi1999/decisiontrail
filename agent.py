@@ -5,7 +5,7 @@ Both modes share the model, prompt core, turn budget and answer validator.
 Usage: python agent.py <case_id> [graph|flat] [--heldout]
 OPENAI_API_KEY required; AGENT_MODEL overrides the model.
 """
-import json, os, sys, time
+import json, os, re, sys
 from pathlib import Path
 
 import openai
@@ -117,9 +117,10 @@ class Session:
             if not sc:
                 return {"error": "unknown project/env"}
             proj, env = sc.split("/")[0], next(s["env"] for s in self.fx["scopes"] if s["id"] == sc)
-            words = set(args.get("keywords", "").lower().split())
-            hits = [r for r in self.rows if r["project"] == proj and r["effective"] <= args["t"]]
-            hits.sort(key=lambda r: (-len(words & set(r["text"].lower().split())), r["id"]))
+            tok = lambda x: set(re.findall(r"[a-z0-9]+", x.lower()))
+            words = tok(args.get("keywords", ""))
+            hits = [r for r in self.rows if r["project"] == proj and r["effective"] <= args["t"] and env in r["envs"]]
+            hits.sort(key=lambda r: (-len(words & tok(r["text"])), r["id"]))
             return [{"id": r["id"], "doc": r["doc"], "decision": r["decision"], "topic": r["topic"],
                      "approver": r["approver"], "owner": r["owner"], "effective": r["effective"],
                      "approver_authorized": env in r["approver_scopes"], "envs": sorted(r["envs"]),
@@ -135,8 +136,11 @@ def run(case, fx, mode, emit=print):
     msgs = [{"role": "system", "content": SYSTEM},
             {"role": "user", "content": f"Date: {case['t']}. Project: {case['project']}. Environment: {case['env']}.\n{case['q']}"}]
     usage = {"requests": 0, "in": 0, "out": 0, "tool_calls": 0}
-    for _ in range(MAX_TURNS):
-        r = client.chat.completions.create(model=MODEL, messages=msgs, tools=tools, max_completion_tokens=900)
+    for turn in range(MAX_TURNS):
+        # last turn: force a submission so a run never ends without an answer (both modes)
+        choice = {"type": "function", "function": {"name": "answer_or_abstain"}} if turn == MAX_TURNS - 1 else "auto"
+        r = client.chat.completions.create(model=MODEL, messages=msgs, tools=tools, tool_choice=choice,
+                                           max_completion_tokens=900)
         usage["requests"] += 1
         usage["in"] += r.usage.prompt_tokens
         usage["out"] += r.usage.completion_tokens

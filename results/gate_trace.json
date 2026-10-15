@@ -1,0 +1,271 @@
+{
+ "queries": {
+  "APPLICABLE": "\nMATCH (s:Scope {id:$scope})<-[a:APPLIES_TO]-(d:Decision)-[ad:ADDRESSES]->(r:Requirement)\nWHERE d.from <= $t AND (d.to IS NULL OR $t < d.to)\nMATCH (d)-[b:APPROVED_BY]->(p:Person)-[z:AUTHORIZED_FOR]->(s)\nWITH s, r, d, p, a, ad, b, z\nMATCH (adp:Passage) WHERE adp.id = ad.src AND d.id+'|ADDRESSES|'+r.id IN adp.claims\nWITH s, r, d, p, a, b, z, adp\nMATCH (ap:Passage) WHERE ap.id = a.src AND d.id+'|APPLIES_TO|'+s.id IN ap.claims\nWITH s, r, d, p, b, z, adp, ap\nMATCH (bp:Passage) WHERE bp.id = b.src AND d.id+'|APPROVED_BY|'+p.id IN bp.claims\nWITH s, r, d, p, z, adp, ap, bp\nMATCH (zp:Passage) WHERE zp.id = z.src AND p.id+'|AUTHORIZED_FOR|'+s.id IN zp.claims\nWITH s, r, d, collect(DISTINCT adp.id) + collect(DISTINCT ap.id) + collect(DISTINCT bp.id) + collect(DISTINCT zp.id) AS ev,\n     collect(DISTINCT p.id) AS approvers\nWITH s, collect({d:d, r:r, ev:ev, approvers:approvers}) AS rows\nWITH s, rows, [x IN rows | x.d.id] AS ids\nUNWIND rows AS row\nWITH s, ids, row, row.d AS d\nOPTIONAL MATCH (d2:Decision)-[x:SUPERSEDES]->(d) WHERE x.scope = s.id AND d2.id IN ids\nOPTIONAL MATCH (xp:Passage) WHERE xp.id = x.src AND d2.id+'|SUPERSEDES|'+d.id+'@'+s.id IN xp.claims\nWITH row, d, count(xp) AS beaten WHERE beaten = 0\nRETURN row.r.id AS req, d.id AS decision, d.title AS title, row.ev AS evidence, row.approvers AS approvers\nORDER BY req, decision\n",
+  "OWNER": "\nMATCH (d:Decision {id:$d})-[o:OWNED_BY]->(p:Person)\nMATCH (op:Passage) WHERE op.id = o.src AND d.id+'|OWNED_BY|'+p.id IN op.claims\nRETURN p.id AS person, p.name AS name, op.id AS passage ORDER BY person\n",
+  "RATIONALE": "\nMATCH (d:Decision {id:$d})-[e:SUPPORTED_BY]->(p:Passage)\nMATCH (ep:Passage) WHERE ep.id = e.src AND d.id+'|SUPPORTED_BY|'+p.id IN ep.claims\nRETURN p.id AS passage, p.doc AS doc, p.rev AS rev, p.text AS text ORDER BY passage\n"
+ },
+ "trace": [
+  {
+   "phase": "A",
+   "scope": "harbor/prod",
+   "t": "2025-10-01",
+   "expected": {
+    "status": "ANSWER",
+    "decision": "D2",
+    "owner": "ben",
+    "rationale": [
+     "P3"
+    ]
+   },
+   "got": {
+    "status": "ANSWER",
+    "decision": "D2",
+    "owner": "ben",
+    "rationale": [
+     "P3"
+    ],
+    "evidence": [
+     "P0",
+     "P2"
+    ]
+   },
+   "raw_applicable": [
+    {
+     "req": "R1",
+     "decision": "D2",
+     "title": "Nightly exports",
+     "evidence": [
+      "P2",
+      "P2",
+      "P2",
+      "P0"
+     ],
+     "approvers": [
+      "ben"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "phase": "A",
+   "scope": "harbor/staging",
+   "t": "2025-10-01",
+   "expected": {
+    "status": "ANSWER",
+    "decision": "D1",
+    "owner": "ana",
+    "rationale": [
+     "P1"
+    ]
+   },
+   "got": {
+    "status": "ANSWER",
+    "decision": "D1",
+    "owner": "ana",
+    "rationale": [
+     "P1"
+    ],
+    "evidence": [
+     "P0",
+     "P1"
+    ]
+   },
+   "raw_applicable": [
+    {
+     "req": "R1",
+     "decision": "D1",
+     "title": "Real-time exports",
+     "evidence": [
+      "P1",
+      "P1",
+      "P1",
+      "P0"
+     ],
+     "approvers": [
+      "ana"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "phase": "A",
+   "scope": "harbor/prod",
+   "t": "2025-03-01",
+   "expected": {
+    "status": "ANSWER",
+    "decision": "D1",
+    "owner": "ana",
+    "rationale": [
+     "P1"
+    ]
+   },
+   "got": {
+    "status": "ANSWER",
+    "decision": "D1",
+    "owner": "ana",
+    "rationale": [
+     "P1"
+    ],
+    "evidence": [
+     "P0",
+     "P1"
+    ]
+   },
+   "raw_applicable": [
+    {
+     "req": "R1",
+     "decision": "D1",
+     "title": "Real-time exports",
+     "evidence": [
+      "P1",
+      "P1",
+      "P1",
+      "P0"
+     ],
+     "approvers": [
+      "ana"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "phase": "B",
+   "scope": "harbor/prod",
+   "t": "2025-10-01",
+   "expected": {
+    "status": "CONFLICT",
+    "decisions": [
+     "D2",
+     "D3"
+    ]
+   },
+   "got": {
+    "status": "CONFLICT",
+    "decisions": [
+     "D2",
+     "D3"
+    ],
+    "reason": "equally authoritative active decisions"
+   },
+   "raw_applicable": [
+    {
+     "req": "R1",
+     "decision": "D2",
+     "title": "Nightly exports",
+     "evidence": [
+      "P2",
+      "P2",
+      "P2",
+      "P0"
+     ],
+     "approvers": [
+      "ben"
+     ]
+    },
+    {
+     "req": "R1",
+     "decision": "D3",
+     "title": "Weekly exports",
+     "evidence": [
+      "P5",
+      "P5",
+      "P5",
+      "P0"
+     ],
+     "approvers": [
+      "ben"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "phase": "B",
+   "scope": "harbor/staging",
+   "t": "2025-10-01",
+   "expected": {
+    "status": "ANSWER",
+    "decision": "D1",
+    "owner": "ana",
+    "rationale": [
+     "P1"
+    ]
+   },
+   "got": {
+    "status": "ANSWER",
+    "decision": "D1",
+    "owner": "ana",
+    "rationale": [
+     "P1"
+    ],
+    "evidence": [
+     "P0",
+     "P1"
+    ]
+   },
+   "raw_applicable": [
+    {
+     "req": "R1",
+     "decision": "D1",
+     "title": "Real-time exports",
+     "evidence": [
+      "P1",
+      "P1",
+      "P1",
+      "P0"
+     ],
+     "approvers": [
+      "ana"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "phase": "B",
+   "scope": "harbor/prod",
+   "t": "2025-07-01",
+   "expected": {
+    "status": "ANSWER",
+    "decision": "D2",
+    "owner": "ben",
+    "rationale": [
+     "P3"
+    ]
+   },
+   "got": {
+    "status": "ANSWER",
+    "decision": "D2",
+    "owner": "ben",
+    "rationale": [
+     "P3"
+    ],
+    "evidence": [
+     "P0",
+     "P2"
+    ]
+   },
+   "raw_applicable": [
+    {
+     "req": "R1",
+     "decision": "D2",
+     "title": "Nightly exports",
+     "evidence": [
+      "P2",
+      "P2",
+      "P2",
+      "P0"
+     ],
+     "approvers": [
+      "ben"
+     ]
+    }
+   ],
+   "ok": true
+  }
+ ],
+ "failures": []
+}

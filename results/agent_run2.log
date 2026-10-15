@@ -1,27 +1,27 @@
-h01 graph correct=True status=ANSWER decision=D4 owner=eli cited=['P09', 'P15'] unsupported=[] usage={'requests': 4, 'in': 3226, 'out': 183, 'tool_calls': 5}
-h01 flat  correct=False status=ANSWER decision=D4 owner=dee cited=['P08', 'P09'] unsupported=[] usage={'requests': 2, 'in': 2828, 'out': 225, 'tool_calls': 4}
-h02 graph correct=True status=ANSWER decision=D4 owner=eli cited=['P09', 'P15'] unsupported=[] usage={'requests': 5, 'in': 4205, 'out': 250, 'tool_calls': 6}
-h02 flat  correct=False status=ANSWER decision=D4 owner=dee cited=['P08', 'P09'] unsupported=[] usage={'requests': 2, 'in': 1384, 'out': 151, 'tool_calls': 2}
-h03 graph correct=True status=ANSWER decision=D4 owner=dee cited=['P09'] unsupported=[] usage={'requests': 4, 'in': 3418, 'out': 266, 'tool_calls': 7}
-h03 flat  correct=True status=ANSWER decision=D4 owner=dee cited=['P09'] unsupported=[] usage={'requests': 2, 'in': 2826, 'out': 204, 'tool_calls': 4}
-h04 graph correct=True status=ANSWER decision=D8 owner=ana cited=['P01', 'P13'] unsupported=[] usage={'requests': 4, 'in': 3560, 'out': 260, 'tool_calls': 7}
-h04 flat  correct=True status=ANSWER decision=D8 owner=ana cited=['P01', 'P13'] unsupported=[] usage={'requests': 3, 'in': 2896, 'out': 164, 'tool_calls': 3}
-h05 graph correct=True status=ANSWER decision=D3 owner=ana cited=['P06'] unsupported=[] usage={'requests': 4, 'in': 3283, 'out': 188, 'tool_calls': 5}
-h05 flat  correct=True status=ANSWER decision=D3 owner=ana cited=['P01', 'P06'] unsupported=[] usage={'requests': 2, 'in': 3249, 'out': 235, 'tool_calls': 4}
-h06 graph correct=True status=ANSWER decision=D2 owner=ben cited=['P03', 'P04'] unsupported=[] usage={'requests': 4, 'in': 3332, 'out': 227, 'tool_calls': 5}
-h06 flat  correct=True status=ANSWER decision=D2 owner=ben cited=['P01', 'P03', 'P04'] unsupported=[] usage={'requests': 2, 'in': 3252, 'out': 279, 'tool_calls': 4}
-h07 graph correct=True status=ANSWER decision=D9 owner=ben cited=['P14'] unsupported=[] usage={'requests': 4, 'in': 3416, 'out': 208, 'tool_calls': 5}
-h07 flat  correct=True status=ANSWER decision=D9 owner=ben cited=['P01', 'P03', 'P14'] unsupported=['P03'] usage={'requests': 2, 'in': 3284, 'out': 255, 'tool_calls': 4}
-h08 graph correct=True status=ANSWER decision=D1 owner=ana cited=['P02'] unsupported=[] usage={'requests': 5, 'in': 4403, 'out': 215, 'tool_calls': 5}
-h08 flat  correct=True status=ANSWER decision=D1 owner=ana cited=['P01', 'P02'] unsupported=[] usage={'requests': 2, 'in': 1645, 'out': 139, 'tool_calls': 2}
-h09 graph correct=True status=ANSWER decision=D7 owner=fay cited=['P12'] unsupported=[] usage={'requests': 4, 'in': 3213, 'out': 186, 'tool_calls': 5}
-h09 flat  correct=False status=CONFLICT decision=['D6', 'D7'] owner=None cited=['P11', 'P12', 'P17'] unsupported=[] usage={'requests': 2, 'in': 2232, 'out': 271, 'tool_calls': 3}
-h10 graph correct=True status=UNKNOWN decision=None owner=None cited=[] unsupported=[] usage={'requests': 3, 'in': 2048, 'out': 130, 'tool_calls': 3}
-h10 flat  correct=True status=UNKNOWN decision=None owner=None cited=['P08', 'P16'] unsupported=[] usage={'requests': 6, 'in': 6250, 'out': 276, 'tool_calls': 5}
-h11 graph correct=True status=ANSWER decision=D5 owner=dee cited=['P08', 'P10'] unsupported=[] usage={'requests': 4, 'in': 3491, 'out': 247, 'tool_calls': 7}
-h11 flat  correct=True status=ANSWER decision=D5 owner=dee cited=['P09', 'P10'] unsupported=['P09'] usage={'requests': 4, 'in': 4539, 'out': 199, 'tool_calls': 4}
-h12 graph correct=True status=ANSWER decision=D1 owner=ana cited=['P02'] unsupported=[] usage={'requests': 4, 'in': 3300, 'out': 205, 'tool_calls': 5}
-h12 flat  correct=True status=ANSWER decision=D1 owner=ana cited=['P01', 'P02'] unsupported=[] usage={'requests': 3, 'in': 3454, 'out': 204, 'tool_calls': 3}
-h13 graph correct=True status=ANSWER decision=D6 owner=eli cited=['P11'] unsupported=[] usage={'requests': 4, 'in': 3181, 'out': 192, 'tool_calls': 5}
-h13 flat  correct=True status=ANSWER decision=D6 owner=eli cited=['P11'] unsupported=[] usage={'requests': 2, 'in': 1803, 'out': 176, 'tool_calls': 3}
-total usage {'requests': 87, 'in': 83718, 'out': 5535}
+h01 graph correct=True status=ANSWER decision=D4 owner=vikram cited=['P09', 'P15'] unsupported=[] usage={'requests': 4, 'in': 3246, 'out': 194, 'tool_calls': 5}
+h01 flat  correct=False status=ANSWER decision=D4 owner=neha cited=['P08', 'P09'] unsupported=[] usage={'requests': 2, 'in': 2259, 'out': 196, 'tool_calls': 3}
+h02 graph correct=True status=ANSWER decision=D4 owner=vikram cited=['P09', 'P15'] unsupported=[] usage={'requests': 6, 'in': 5377, 'out': 249, 'tool_calls': 7}
+h02 flat  correct=False status=ANSWER decision=D4 owner=neha cited=['P08', 'P09'] unsupported=[] usage={'requests': 2, 'in': 2137, 'out': 244, 'tool_calls': 4}
+h03 graph correct=True status=ANSWER decision=D4 owner=neha cited=['P09'] unsupported=[] usage={'requests': 5, 'in': 4276, 'out': 192, 'tool_calls': 5}
+h03 flat  correct=True status=ANSWER decision=D4 owner=neha cited=['P08', 'P09'] unsupported=[] usage={'requests': 2, 'in': 2858, 'out': 235, 'tool_calls': 4}
+h04 graph correct=True status=ANSWER decision=D8 owner=priya cited=['P13'] unsupported=[] usage={'requests': 4, 'in': 3363, 'out': 208, 'tool_calls': 5}
+h04 flat  correct=False status=CONFLICT decision=['D3', 'D8'] owner=None cited=['P06', 'P13'] unsupported=[] usage={'requests': 4, 'in': 6219, 'out': 265, 'tool_calls': 5}
+h05 graph correct=True status=ANSWER decision=D3 owner=priya cited=['P06'] unsupported=[] usage={'requests': 4, 'in': 3318, 'out': 209, 'tool_calls': 5}
+h05 flat  correct=True status=ANSWER decision=D3 owner=priya cited=['P01', 'P06'] unsupported=[] usage={'requests': 2, 'in': 3282, 'out': 235, 'tool_calls': 4}
+h06 graph correct=True status=ANSWER decision=D2 owner=arjun cited=['P03', 'P04'] unsupported=[] usage={'requests': 4, 'in': 3365, 'out': 224, 'tool_calls': 5}
+h06 flat  correct=True status=ANSWER decision=D2 owner=arjun cited=['P01', 'P03', 'P04', 'P05'] unsupported=['P05'] usage={'requests': 2, 'in': 3296, 'out': 297, 'tool_calls': 4}
+h07 graph correct=True status=ANSWER decision=D9 owner=arjun cited=['P14'] unsupported=[] usage={'requests': 4, 'in': 3463, 'out': 212, 'tool_calls': 5}
+h07 flat  correct=True status=ANSWER decision=D9 owner=arjun cited=['P01', 'P03', 'P14'] unsupported=['P03'] usage={'requests': 2, 'in': 3293, 'out': 246, 'tool_calls': 4}
+h08 graph correct=True status=ANSWER decision=D1 owner=priya cited=['P02'] unsupported=[] usage={'requests': 4, 'in': 3303, 'out': 213, 'tool_calls': 5}
+h08 flat  correct=True status=ANSWER decision=D1 owner=priya cited=['P01', 'P02'] unsupported=[] usage={'requests': 2, 'in': 1654, 'out': 156, 'tool_calls': 2}
+h09 graph correct=True status=ANSWER decision=D7 owner=kavya cited=['P12'] unsupported=[] usage={'requests': 4, 'in': 3234, 'out': 202, 'tool_calls': 5}
+h09 flat  correct=True status=ANSWER decision=D7 owner=kavya cited=['P12', 'P17'] unsupported=['P17'] usage={'requests': 3, 'in': 3013, 'out': 211, 'tool_calls': 5}
+h10 graph correct=True status=UNKNOWN decision=None owner=None cited=[] unsupported=[] usage={'requests': 3, 'in': 2056, 'out': 122, 'tool_calls': 3}
+h10 flat  correct=True status=UNKNOWN decision=None owner=None cited=[] unsupported=[] usage={'requests': 2, 'in': 1776, 'out': 174, 'tool_calls': 3}
+h11 graph correct=True status=ANSWER decision=D5 owner=neha cited=['P10'] unsupported=[] usage={'requests': 4, 'in': 3361, 'out': 208, 'tool_calls': 5}
+h11 flat  correct=True status=ANSWER decision=D5 owner=neha cited=['P08', 'P10'] unsupported=[] usage={'requests': 2, 'in': 2519, 'out': 201, 'tool_calls': 3}
+h12 graph correct=True status=ANSWER decision=D1 owner=priya cited=['P02'] unsupported=[] usage={'requests': 4, 'in': 3335, 'out': 207, 'tool_calls': 5}
+h12 flat  correct=True status=ANSWER decision=D1 owner=priya cited=['P01', 'P02'] unsupported=[] usage={'requests': 3, 'in': 3017, 'out': 211, 'tool_calls': 4}
+h13 graph correct=True status=ANSWER decision=D6 owner=vikram cited=['P11'] unsupported=[] usage={'requests': 4, 'in': 3186, 'out': 219, 'tool_calls': 5}
+h13 flat  correct=True status=ANSWER decision=D6 owner=vikram cited=['P11'] unsupported=[] usage={'requests': 2, 'in': 2188, 'out': 205, 'tool_calls': 4}
+total usage {'requests': 84, 'in': 82394, 'out': 5535}

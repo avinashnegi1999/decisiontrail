@@ -79,10 +79,10 @@ The baseline picks the right decision every time. It loses where the reason or o
 | | Graph tools, run 1 | Graph tools, run 2 | Flat index, run 1 | Flat index, run 2 |
 |---|---:|---:|---:|---:|
 | Held-out cases fully correct | 12/12 | 12/12 | 10/12 | 9/12 |
-| Unsupported citations | 0 | 0 | 3 | 2 |
+| Unsupported citations | 0 | 0 | 2 | 3 |
 | Regression case h13 | correct | correct | correct | correct |
 
-The two runs together took 170 requests, 160,521 input tokens and 10,841 output tokens. In flat mode, the model named the previous owner after an ownership transfer (h01, h02), and in one run it called a conflict that had already been resolved (h09). It also cited passages that do not support the decision it answered with. Graph mode got every case right and cited only supporting passages.
+The two runs together took 167 requests, 162,264 input tokens and 10,960 output tokens. In flat mode, the model named the previous owner after an ownership transfer (h01, h02). In one run it also called a conflict between a decision and the newer decision that replaced it for staging only (h04). It cited passages that do not support the decision it answered with. Graph mode got every case right and cited only supporting passages.
 
 **How the agent harness changed.** Before these final runs, the harness was fixed several times after looking at held-out runs. Every fix applied to both modes:
 

@@ -14,12 +14,12 @@
     "date": "2026-06-01",
     "doc": "ADR-6 passkeys",
     "rev": "r1",
-    "text": "ADR-6: From 2026-06-01 Harbor staging uses passkeys for sign-in, replacing ADR-3 for staging only, to trial phishing-resistant login. Approved and owned by Ana Ruiz.",
+    "text": "ADR-6: From 2026-06-01 Harbor staging uses passkeys for sign-in, replacing ADR-3 for staging only, to trial phishing-resistant login. Approved and owned by Priya Sharma.",
     "claims": [
      "D8|APPLIES_TO|harbor/staging",
      "D8|SUPERSEDES|D3@harbor/staging",
-     "D8|APPROVED_BY|ana",
-     "D8|OWNED_BY|ana",
+     "D8|APPROVED_BY|priya",
+     "D8|OWNED_BY|priya",
      "D8|ADDRESSES|R2",
      "D8|SUPPORTED_BY|P13"
     ]
@@ -43,11 +43,11 @@
   },
   {
    "op": "add_relation",
-   "relation": "APPROVED_BY D8 ana P13"
+   "relation": "APPROVED_BY D8 priya P13"
   },
   {
    "op": "add_relation",
-   "relation": "OWNED_BY D8 ana P13"
+   "relation": "OWNED_BY D8 priya P13"
   },
   {
    "op": "add_relation",
@@ -65,12 +65,12 @@
     "date": "2026-09-20",
     "doc": "ADR-7 hourly exports",
     "rev": "r1",
-    "text": "ADR-7: From 2027-02-01 Harbor production exports customer data hourly, replacing ADR-2 for production, because the nightly batch window no longer fits data volume. Approved and owned by Ben Okafor.",
+    "text": "ADR-7: From 2027-02-01 Harbor production exports customer data hourly, replacing ADR-2 for production, because the nightly batch window no longer fits data volume. Approved and owned by Arjun Mehta.",
     "claims": [
      "D9|APPLIES_TO|harbor/prod",
      "D9|SUPERSEDES|D2@harbor/prod",
-     "D9|APPROVED_BY|ben",
-     "D9|OWNED_BY|ben",
+     "D9|APPROVED_BY|arjun",
+     "D9|OWNED_BY|arjun",
      "D9|ADDRESSES|R1",
      "D9|SUPPORTED_BY|P14"
     ]
@@ -94,11 +94,11 @@
   },
   {
    "op": "add_relation",
-   "relation": "APPROVED_BY D9 ben P14"
+   "relation": "APPROVED_BY D9 arjun P14"
   },
   {
    "op": "add_relation",
-   "relation": "OWNED_BY D9 ben P14"
+   "relation": "OWNED_BY D9 arjun P14"
   },
   {
    "op": "add_relation",
@@ -116,15 +116,15 @@
     "date": "2026-08-01",
     "doc": "Lumen ownership update",
     "rev": "r1",
-    "text": "From 2026-08-01 Eli Varga owns ADR-4 (Redis session store). The decision itself is unchanged.",
+    "text": "From 2026-08-01 Vikram Rao owns ADR-4 (Redis session store). The decision itself is unchanged.",
     "claims": [
-     "D4|OWNED_BY|eli"
+     "D4|OWNED_BY|vikram"
     ]
    }
   },
   {
    "op": "add_relation",
-   "relation": "OWNED_BY D4 eli P15 2026-08-01"
+   "relation": "OWNED_BY D4 vikram P15 2026-08-01"
   },
   {
    "op": "add_passage",
@@ -134,19 +134,19 @@
     "date": "2026-04-15",
     "doc": "Lumen governance charter",
     "rev": "r3",
-    "text": "Charter r3, effective 2026-04-15: Eli Varga no longer approves release process changes for Lumen production. Fay Osei continues to.",
+    "text": "Charter r3, effective 2026-04-15: Vikram Rao no longer approves release process changes for Lumen production. Kavya Nair continues to.",
     "claims": [
-     "eli|AUTHORIZED_FOR|lumen/prod|ENDS"
+     "vikram|AUTHORIZED_FOR|lumen/prod|ENDS"
     ]
    }
   },
   {
    "op": "remove_relation",
-   "relation": "AUTHORIZED_FOR eli lumen/prod P08"
+   "relation": "AUTHORIZED_FOR vikram lumen/prod P08"
   },
   {
    "op": "add_relation",
-   "relation": "AUTHORIZED_FOR eli lumen/prod P08 to=2026-04-15 end=P17"
+   "relation": "AUTHORIZED_FOR vikram lumen/prod P08 to=2026-04-15 end=P17"
   },
   {
    "op": "add_passage",
@@ -156,11 +156,11 @@
     "date": "2026-07-01",
     "doc": "Lumen staging release note",
     "rev": "r1",
-    "text": "Lumen staging releases on every merge. Approved and owned by Eli Varga.",
+    "text": "Lumen staging releases on every merge. Approved and owned by Vikram Rao.",
     "claims": [
      "D10|APPLIES_TO|lumen/staging",
-     "D10|APPROVED_BY|eli",
-     "D10|OWNED_BY|eli",
+     "D10|APPROVED_BY|vikram",
+     "D10|OWNED_BY|vikram",
      "D10|ADDRESSES|R4",
      "D10|SUPPORTED_BY|P16"
     ]
@@ -180,11 +180,11 @@
   },
   {
    "op": "add_relation",
-   "relation": "APPROVED_BY D10 eli P16"
+   "relation": "APPROVED_BY D10 vikram P16"
   },
   {
    "op": "add_relation",
-   "relation": "OWNED_BY D10 eli P16"
+   "relation": "OWNED_BY D10 vikram P16"
   },
   {
    "op": "add_relation",
@@ -214,7 +214,7 @@
    "expect": {
     "status": "ANSWER",
     "decision": "D4",
-    "owner": "eli",
+    "owner": "vikram",
     "rationale": [
      "P09"
     ]
@@ -230,7 +230,7 @@
    "expect": {
     "status": "ANSWER",
     "decision": "D4",
-    "owner": "eli",
+    "owner": "vikram",
     "rationale": [
      "P09"
     ]
@@ -246,7 +246,7 @@
    "expect": {
     "status": "ANSWER",
     "decision": "D4",
-    "owner": "dee",
+    "owner": "neha",
     "rationale": [
      "P09"
     ]
@@ -262,7 +262,7 @@
    "expect": {
     "status": "ANSWER",
     "decision": "D8",
-    "owner": "ana",
+    "owner": "priya",
     "rationale": [
      "P13"
     ]
@@ -278,7 +278,7 @@
    "expect": {
     "status": "ANSWER",
     "decision": "D3",
-    "owner": "ana",
+    "owner": "priya",
     "rationale": [
      "P06"
     ]
@@ -294,7 +294,7 @@
    "expect": {
     "status": "ANSWER",
     "decision": "D2",
-    "owner": "ben",
+    "owner": "arjun",
     "rationale": [
      "P04"
     ]
@@ -310,7 +310,7 @@
    "expect": {
     "status": "ANSWER",
     "decision": "D9",
-    "owner": "ben",
+    "owner": "arjun",
     "rationale": [
      "P14"
     ]
@@ -326,7 +326,7 @@
    "expect": {
     "status": "ANSWER",
     "decision": "D1",
-    "owner": "ana",
+    "owner": "priya",
     "rationale": [
      "P02"
     ]
@@ -342,7 +342,7 @@
    "expect": {
     "status": "ANSWER",
     "decision": "D7",
-    "owner": "fay",
+    "owner": "kavya",
     "rationale": [
      "P12"
     ]
@@ -369,7 +369,7 @@
    "expect": {
     "status": "ANSWER",
     "decision": "D5",
-    "owner": "dee",
+    "owner": "neha",
     "rationale": [
      "P10"
     ]
@@ -385,7 +385,7 @@
    "expect": {
     "status": "ANSWER",
     "decision": "D1",
-    "owner": "ana",
+    "owner": "priya",
     "rationale": [
      "P02"
     ]
@@ -402,7 +402,7 @@
    "expect": {
     "status": "ANSWER",
     "decision": "D6",
-    "owner": "eli",
+    "owner": "vikram",
     "rationale": [
      "P11"
     ]

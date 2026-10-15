@@ -1,8 +1,8 @@
 {
  "total_usage": {
   "requests": 83,
-  "in": 76803,
-  "out": 5306
+  "in": 79870,
+  "out": 5425
  },
  "runs": [
   {
@@ -11,12 +11,12 @@
    "answer": {
     "status": "ANSWER",
     "decision": "D4",
-    "owner": "eli",
+    "owner": "vikram",
     "cited_passages": [
      "P09",
      "P15"
     ],
-    "explanation": "Beacon production (lumen/prod) keeps web sessions in Redis. The rationale says this was approved because sessions must survive a web server restart. The accountable owner today is Eli Varga."
+    "explanation": "Beacon production (lumen/prod) currently keeps web sessions in Redis. The rationale says this is because sessions must survive a web server restart. The decision is D4, and the current owner is Vikram Rao."
    },
    "correct": true,
    "grade": {
@@ -30,9 +30,9 @@
    "unsupported_citations": [],
    "usage": {
     "requests": 4,
-    "in": 3226,
-    "out": 192,
-    "tool_calls": 5
+    "in": 3370,
+    "out": 239,
+    "tool_calls": 6
    }
   },
   {
@@ -41,12 +41,12 @@
    "answer": {
     "status": "ANSWER",
     "decision": "D4",
-    "owner": "dee",
+    "owner": "neha",
     "cited_passages": [
      "P09",
      "P08"
     ],
-    "explanation": "Beacon production keeps web sessions in Redis. The approved architecture decision says this is because sessions must survive a web server restart. Dee Laine owns that decision, and the governance charter shows Dee is the authorized approver for production/staging architecture."
+    "explanation": "Beacon production keeps web sessions in Redis. The approved architecture decision says sessions are stored in Redis in production and staging because they must survive a web server restart. The governing charter says Neha Iyer approves architecture for Beacon/Lumen production and staging, and the ADR is approved and owned by Neha Iyer."
    },
    "correct": false,
    "grade": {
@@ -60,8 +60,8 @@
    "unsupported_citations": [],
    "usage": {
     "requests": 2,
-    "in": 2829,
-    "out": 224,
+    "in": 2860,
+    "out": 240,
     "tool_calls": 4
    }
   },
@@ -71,371 +71,12 @@
    "answer": {
     "status": "ANSWER",
     "decision": "D4",
-    "owner": "eli",
+    "owner": "vikram",
     "cited_passages": [
      "P09",
      "P15"
     ],
-    "explanation": "Beacon staging currently uses the Redis session store decision D4, effective in staging by 2026-10-15. The rationale says sessions are stored in Redis in production and staging, and the owner resolution for D4 at this date is Eli Varga."
-   },
-   "correct": true,
-   "grade": {
-    "status": true,
-    "decision": true,
-    "owner": true,
-    "rationale": true,
-    "wrong_answer": false,
-    "all": true
-   },
-   "unsupported_citations": [],
-   "usage": {
-    "requests": 4,
-    "in": 3216,
-    "out": 259,
-    "tool_calls": 7
-   }
-  },
-  {
-   "case": "h02",
-   "mode": "flat",
-   "answer": {
-    "status": "ANSWER",
-    "decision": "D4",
-    "owner": "dee",
-    "cited_passages": [
-     "P08",
-     "P09"
-    ],
-    "explanation": "The Beacon staging session store is currently owned by Dee Laine. The applicable approved decision is D4, which says sessions are stored in Redis in both production and staging and is explicitly approved and owned by Dee Laine. P08 shows Dee Laine is authorized to approve architecture for staging, so this authority applies here."
-   },
-   "correct": false,
-   "grade": {
-    "status": true,
-    "decision": true,
-    "owner": false,
-    "rationale": true,
-    "wrong_answer": false,
-    "all": false
-   },
-   "unsupported_citations": [],
-   "usage": {
-    "requests": 2,
-    "in": 1384,
-    "out": 154,
-    "tool_calls": 2
-   }
-  },
-  {
-   "case": "h03",
-   "mode": "graph",
-   "answer": {
-    "status": "ANSWER",
-    "decision": "D4",
-    "owner": "dee",
-    "cited_passages": [
-     "P08",
-     "P09"
-    ],
-    "explanation": "On 2026-07-01, the applicable production session-store decision for Beacon/Lumen is D4, 'Redis session store.' It is supported by ADR-4 and approved/owned by Dee Laine; the governance charter shows Dee approves Lumen production architecture decisions."
-   },
-   "correct": true,
-   "grade": {
-    "status": true,
-    "decision": true,
-    "owner": true,
-    "rationale": true,
-    "wrong_answer": false,
-    "all": true
-   },
-   "unsupported_citations": [],
-   "usage": {
-    "requests": 4,
-    "in": 3521,
-    "out": 285,
-    "tool_calls": 8
-   }
-  },
-  {
-   "case": "h03",
-   "mode": "flat",
-   "answer": {
-    "status": "ANSWER",
-    "decision": "D4",
-    "owner": "dee",
-    "cited_passages": [
-     "P09"
-    ],
-    "explanation": "On 2026-07-01, the Beacon production session store decision is D4: sessions are stored in Redis in production, and it is approved and owned by Dee Laine."
-   },
-   "correct": true,
-   "grade": {
-    "status": true,
-    "decision": true,
-    "owner": true,
-    "rationale": true,
-    "wrong_answer": false,
-    "all": true
-   },
-   "unsupported_citations": [],
-   "usage": {
-    "requests": 2,
-    "in": 2237,
-    "out": 168,
-    "tool_calls": 3
-   }
-  },
-  {
-   "case": "h04",
-   "mode": "graph",
-   "answer": {
-    "status": "ANSWER",
-    "decision": "D8",
-    "owner": "ana",
-    "cited_passages": [
-     "P13"
-    ],
-    "explanation": "Harbor staging users sign in with passkeys now. Decision D8 applies to harbor/staging as of 2026-10-15, and it replaces the earlier staging-only OIDC sign-in decision. The supporting rationale says this was approved to trial phishing-resistant login and is owned by Ana Ruiz."
-   },
-   "correct": true,
-   "grade": {
-    "status": true,
-    "decision": true,
-    "owner": true,
-    "rationale": true,
-    "wrong_answer": false,
-    "all": true
-   },
-   "unsupported_citations": [],
-   "usage": {
-    "requests": 4,
-    "in": 3420,
-    "out": 249,
-    "tool_calls": 6
-   }
-  },
-  {
-   "case": "h04",
-   "mode": "flat",
-   "answer": {
-    "status": "ANSWER",
-    "decision": "D8",
-    "owner": "ana",
-    "cited_passages": [
-     "P01",
-     "P13"
-    ],
-    "explanation": "Harbor staging users now sign in with passkeys. The currently applicable decision is ADR-6 (D8), which from 2026-06-01 replaces ADR-3 for staging only and says staging uses passkeys to trial phishing-resistant login. Ana Ruiz owns and approved that decision, and the governance charter says Ana Ruiz approves architecture decisions for Harbor production and staging."
-   },
-   "correct": true,
-   "grade": {
-    "status": true,
-    "decision": true,
-    "owner": true,
-    "rationale": true,
-    "wrong_answer": false,
-    "all": true
-   },
-   "unsupported_citations": [],
-   "usage": {
-    "requests": 2,
-    "in": 2911,
-    "out": 260,
-    "tool_calls": 4
-   }
-  },
-  {
-   "case": "h05",
-   "mode": "graph",
-   "answer": {
-    "status": "ANSWER",
-    "decision": "D3",
-    "owner": "ana",
-    "cited_passages": [
-     "P01",
-     "P06"
-    ],
-    "explanation": "Harbor production users sign in with company single sign-on (OIDC). The currently applicable decision for production is D3, effective 2025-02-01, and it is owned by Ana Ruiz."
-   },
-   "correct": true,
-   "grade": {
-    "status": true,
-    "decision": true,
-    "owner": true,
-    "rationale": true,
-    "wrong_answer": false,
-    "all": true
-   },
-   "unsupported_citations": [],
-   "usage": {
-    "requests": 5,
-    "in": 4430,
-    "out": 200,
-    "tool_calls": 5
-   }
-  },
-  {
-   "case": "h05",
-   "mode": "flat",
-   "answer": {
-    "status": "ANSWER",
-    "decision": "D3",
-    "owner": "ana",
-    "cited_passages": [
-     "P06"
-    ],
-    "explanation": "Harbor production users sign in through company single sign-on (OIDC). This is the approved production decision effective since 2025-02-01, and it is owned by Ana Ruiz."
-   },
-   "correct": true,
-   "grade": {
-    "status": true,
-    "decision": true,
-    "owner": true,
-    "rationale": true,
-    "wrong_answer": false,
-    "all": true
-   },
-   "unsupported_citations": [],
-   "usage": {
-    "requests": 2,
-    "in": 1760,
-    "out": 122,
-    "tool_calls": 2
-   }
-  },
-  {
-   "case": "h06",
-   "mode": "graph",
-   "answer": {
-    "status": "ANSWER",
-    "decision": "D2",
-    "owner": "ben",
-    "cited_passages": [
-     "P03",
-     "P04"
-    ],
-    "explanation": "Harbor production currently exports customer data via the approved nightly batch export decision D2, which is effective in production from 2025-06-01. D2 replaced the earlier real-time export choice D1 after the INC-42 postmortem showed real-time export saturated the production database and delayed checkout; the change was approved by ben, who remains the accountable owner."
-   },
-   "correct": true,
-   "grade": {
-    "status": true,
-    "decision": true,
-    "owner": true,
-    "rationale": true,
-    "wrong_answer": false,
-    "all": true
-   },
-   "unsupported_citations": [],
-   "usage": {
-    "requests": 4,
-    "in": 3332,
-    "out": 230,
-    "tool_calls": 5
-   }
-  },
-  {
-   "case": "h06",
-   "mode": "flat",
-   "answer": {
-    "status": "ANSWER",
-    "decision": "D2",
-    "owner": "ben",
-    "cited_passages": [
-     "P03",
-     "P01",
-     "P04"
-    ],
-    "explanation": "Harbor production exports customer data in a nightly batch today because ADR-2 is the approved production decision effective 2025-06-01, and it explicitly replaces ADR-1 for production only. Ben Okafor owns that decision. The stated rationale is that the real-time export saturated the production database at peak load and delayed checkout for 40 minutes; a nightly batch removes the peak."
-   },
-   "correct": true,
-   "grade": {
-    "status": true,
-    "decision": true,
-    "owner": true,
-    "rationale": true,
-    "wrong_answer": false,
-    "all": true
-   },
-   "unsupported_citations": [],
-   "usage": {
-    "requests": 2,
-    "in": 1772,
-    "out": 188,
-    "tool_calls": 2
-   }
-  },
-  {
-   "case": "h07",
-   "mode": "graph",
-   "answer": {
-    "status": "ANSWER",
-    "decision": "D9",
-    "owner": "ben",
-    "cited_passages": [
-     "P14"
-    ],
-    "explanation": "On 2027-03-01, Harbor production exports customer data hourly. That choice is set by decision D9, which replaced the earlier nightly batch export for production. The accountable owner is Ben Okafor (ben)."
-   },
-   "correct": true,
-   "grade": {
-    "status": true,
-    "decision": true,
-    "owner": true,
-    "rationale": true,
-    "wrong_answer": false,
-    "all": true
-   },
-   "unsupported_citations": [],
-   "usage": {
-    "requests": 4,
-    "in": 3416,
-    "out": 198,
-    "tool_calls": 5
-   }
-  },
-  {
-   "case": "h07",
-   "mode": "flat",
-   "answer": {
-    "status": "ANSWER",
-    "decision": "D9",
-    "owner": "ben",
-    "cited_passages": [
-     "P14",
-     "P03",
-     "P01"
-    ],
-    "explanation": "On 2027-03-01, Harbor production exports customer data hourly. ADR-7 (D9), effective 2027-02-01 and approved by authorized approver Ben Okafor, replaces ADR-2 for production only. ADR-2 had previously replaced real-time exports in production. The ownership of the current choice is Ben Okafor."
-   },
-   "correct": true,
-   "grade": {
-    "status": true,
-    "decision": true,
-    "owner": true,
-    "rationale": true,
-    "wrong_answer": false,
-    "all": true
-   },
-   "unsupported_citations": [
-    "P03"
-   ],
-   "usage": {
-    "requests": 2,
-    "in": 1778,
-    "out": 177,
-    "tool_calls": 2
-   }
-  },
-  {
-   "case": "h08",
-   "mode": "graph",
-   "answer": {
-    "status": "ANSWER",
-    "decision": "D1",
-    "owner": "ana",
-    "cited_passages": [
-     "P02"
-    ],
-    "explanation": "Harbor staging exports customer data in real time. The applicable decision is D1 for harbor/staging at 2026-10-15, and its rationale states that Harbor exports customer data in real time in production and staging. Ownership is Ana Ruiz / ana."
+    "explanation": "Beacon staging stores web sessions in Redis under ADR-4 (D4), effective for production and staging. The ownership for ADR-4 was updated to Vikram Rao as of 2026-08-01, and the decision itself is unchanged."
    },
    "correct": true,
    "grade": {
@@ -449,23 +90,52 @@
    "unsupported_citations": [],
    "usage": {
     "requests": 6,
-    "in": 5627,
-    "out": 228,
-    "tool_calls": 6
+    "in": 5385,
+    "out": 252,
+    "tool_calls": 7
    }
   },
   {
-   "case": "h08",
+   "case": "h02",
    "mode": "flat",
    "answer": {
     "status": "ANSWER",
-    "decision": "D1",
-    "owner": "ana",
+    "decision": "D4",
+    "owner": "neha",
     "cited_passages": [
-     "P02",
-     "P01"
+     "P09",
+     "P08"
     ],
-    "explanation": "Harbor staging exports customer data in real time today. The approved decision is ADR-1 (D1), which applies to both production and staging and says Harbor exports customer data in real time because partner dashboards need fresh data. Ana Ruiz is the authorized approver and owner for this architecture decision in staging."
+    "explanation": "Beacon staging session store is owned by Neha Iyer. The applicable approved decision is D4, which says Beacon/Lumen stores web sessions in Redis in production and staging and is approved and owned by Neha Iyer. The governance charter also authorizes Neha to approve architecture for staging, so this decision is valid for this environment."
+   },
+   "correct": false,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": false,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": false
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 2,
+    "in": 1390,
+    "out": 159,
+    "tool_calls": 2
+   }
+  },
+  {
+   "case": "h03",
+   "mode": "graph",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D4",
+    "owner": "neha",
+    "cited_passages": [
+     "P09"
+    ],
+    "explanation": "On 2026-07-01, the Beacon production session store decision in effect was D4, \"Redis session store,\" which applies to Lumen production and was effective from 2025-04-01. The supporting rationale says Lumen stores web sessions in Redis in production and staging, and that it was approved and owned by Neha Iyer. Therefore the owner on that date was Neha Iyer (neha)."
    },
    "correct": true,
    "grade": {
@@ -478,23 +148,52 @@
    },
    "unsupported_citations": [],
    "usage": {
-    "requests": 2,
-    "in": 2280,
-    "out": 201,
+    "requests": 5,
+    "in": 4276,
+    "out": 227,
+    "tool_calls": 5
+   }
+  },
+  {
+   "case": "h03",
+   "mode": "flat",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D4",
+    "owner": "neha",
+    "cited_passages": [
+     "P09"
+    ],
+    "explanation": "On 2026-07-01, the applicable production decision for Beacon's session store is D4: sessions are stored in Redis in production and staging. The passage says it is approved and owned by Neha Iyer, so she owned that choice."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 3,
+    "in": 3388,
+    "out": 190,
     "tool_calls": 3
    }
   },
   {
-   "case": "h09",
+   "case": "h04",
    "mode": "graph",
    "answer": {
     "status": "ANSWER",
-    "decision": "D7",
-    "owner": "fay",
+    "decision": "D8",
+    "owner": "priya",
     "cited_passages": [
-     "P12"
+     "P13"
     ],
-    "explanation": "Beacon production currently releases daily behind feature flags. This is supported by decision D7, which is applicable in production as of 2026-10-15 and supersedes the earlier weekly-release decision D6. The accountable owner is Fay Osei."
+    "explanation": "Harbor staging users currently sign in with passkeys. The approved staging-only replacement took effect on 2026-06-01 to trial phishing-resistant login, replacing the previous staging OIDC sign-in decision. Priya Sharma owns that decision."
    },
    "correct": true,
    "grade": {
@@ -508,8 +207,306 @@
    "unsupported_citations": [],
    "usage": {
     "requests": 4,
-    "in": 3213,
+    "in": 3363,
+    "out": 203,
+    "tool_calls": 5
+   }
+  },
+  {
+   "case": "h04",
+   "mode": "flat",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D8",
+    "owner": "priya",
+    "cited_passages": [
+     "P13",
+     "P01"
+    ],
+    "explanation": "Harbor staging users sign in with passkeys now. ADR-6 explicitly replaces the earlier staging sign-in choice for staging only, effective 2026-06-01, and the given date is after that. The choice is owned by Priya Sharma, who is authorized to approve Harbor production and staging architecture decisions."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 2,
+    "in": 2940,
+    "out": 250,
+    "tool_calls": 4
+   }
+  },
+  {
+   "case": "h05",
+   "mode": "graph",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D3",
+    "owner": "priya",
+    "cited_passages": [
+     "P06"
+    ],
+    "explanation": "Harbor production users sign in through company single sign-on (OIDC). The approved decision currently applying to production is D3, effective 2025-02-01, and its rationale says this is because auditors require one central access log. The accountable owner is Priya Sharma."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 4,
+    "in": 3318,
+    "out": 210,
+    "tool_calls": 5
+   }
+  },
+  {
+   "case": "h05",
+   "mode": "flat",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D3",
+    "owner": "priya",
+    "cited_passages": [
+     "P06",
+     "P01"
+    ],
+    "explanation": "Harbor production users currently sign in through company single sign-on (OIDC). The approved decision is ADR-3, effective in production since 2025-02-01, and it is owned by Priya Sharma. The governance charter shows Priya is the authorized approver for production architecture decisions."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 2,
+    "in": 2541,
+    "out": 207,
+    "tool_calls": 3
+   }
+  },
+  {
+   "case": "h06",
+   "mode": "graph",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D2",
+    "owner": "arjun",
+    "cited_passages": [
+     "P03",
+     "P04"
+    ],
+    "explanation": "Harbor production currently uses the nightly batch customer data export because decision D2 applies in production as of 2026-10-15. It replaced the earlier real-time export decision D1 after the production incident described in INC-42 showed real-time export saturated the database and delayed checkout; the nightly batch was adopted to remove that peak load. The accountable owner is Arjun Mehta (arjun)."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 4,
+    "in": 3365,
+    "out": 237,
+    "tool_calls": 5
+   }
+  },
+  {
+   "case": "h06",
+   "mode": "flat",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D2",
+    "owner": "arjun",
+    "cited_passages": [
+     "P03",
+     "P01",
+     "P04"
+    ],
+    "explanation": "Harbor production currently exports customer data in a nightly batch because ADR-2 replaced the earlier real-time approach for production only, effective 2025-06-01. The rationale was incident INC-42, where real-time export saturated the production database and delayed checkout. Arjun Mehta owns this production decision and is authorized to approve Harbor production architecture decisions."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 3,
+    "in": 3322,
+    "out": 231,
+    "tool_calls": 5
+   }
+  },
+  {
+   "case": "h07",
+   "mode": "graph",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D9",
+    "owner": "arjun",
+    "cited_passages": [
+     "P14",
+     "P01"
+    ],
+    "explanation": "Harbor production exports customer data hourly on 2027-03-01. The currently applicable decision is D9, which replaced the earlier nightly batch decision for production because the batch window no longer fit the data volume. D9 is approved and owned by Arjun Mehta."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 5,
+    "in": 4774,
+    "out": 231,
+    "tool_calls": 6
+   }
+  },
+  {
+   "case": "h07",
+   "mode": "flat",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D9",
+    "owner": "arjun",
+    "cited_passages": [
+     "P14",
+     "P01"
+    ],
+    "explanation": "On 2027-03-01, Harbor production exports customer data hourly. ADR-7 (D9) is effective from 2027-02-01 and applies to production, replacing ADR-2 for production. Arjun Mehta is the authorized approver/owner for Harbor production architecture decisions."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 2,
+    "in": 2557,
     "out": 202,
+    "tool_calls": 3
+   }
+  },
+  {
+   "case": "h08",
+   "mode": "graph",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D1",
+    "owner": "priya",
+    "cited_passages": [
+     "P02"
+    ],
+    "explanation": "Harbor staging exports customer data in real time today. The applicable decision for staging at 2026-10-15 is D1, and its rationale states that Harbor exports customer data in real time in production and staging because partner dashboards need fresh data. Priya Sharma owns this decision."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 4,
+    "in": 3303,
+    "out": 212,
+    "tool_calls": 5
+   }
+  },
+  {
+   "case": "h08",
+   "mode": "flat",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D1",
+    "owner": "priya",
+    "cited_passages": [
+     "P01",
+     "P02"
+    ],
+    "explanation": "Today Harbor staging exports customer data in real time. The approved decision is D1 (ADR-1), effective for both production and staging and owned by Priya Sharma. The governance charter shows Priya is authorized to approve architecture decisions for Harbor production and staging."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 2,
+    "in": 2303,
+    "out": 196,
+    "tool_calls": 3
+   }
+  },
+  {
+   "case": "h09",
+   "mode": "graph",
+   "answer": {
+    "status": "ANSWER",
+    "decision": "D7",
+    "owner": "kavya",
+    "cited_passages": [
+     "P12"
+    ],
+    "explanation": "Beacon production is governed by Lumen\u2019s production scope, and the current applicable decision for release cadence is D7: daily releases behind feature flags effective 2026-05-01. It was approved and is owned by Kavya Nair. The older weekly-release decision D6 is set aside."
+   },
+   "correct": true,
+   "grade": {
+    "status": true,
+    "decision": true,
+    "owner": true,
+    "rationale": true,
+    "wrong_answer": false,
+    "all": true
+   },
+   "unsupported_citations": [],
+   "usage": {
+    "requests": 4,
+    "in": 3234,
+    "out": 213,
     "tool_calls": 5
    }
   },
@@ -519,12 +516,12 @@
    "answer": {
     "status": "ANSWER",
     "decision": "D7",
-    "owner": "fay",
+    "owner": "kavya",
     "cited_passages": [
-     "P12",
-     "P17"
+     "P17",
+     "P12"
     ],
-    "explanation": "Beacon production releases daily behind feature flags as of 2026-05-01. The approved decision is D7, and the release-process authority for production is Fay Osei; the charter update says Eli no longer approves this area while Fay continues to."
+    "explanation": "Beacon production currently releases daily behind feature flags, effective 2026-05-01. That replacement is approved by an authorized approver for production, and the charter says Kavya Nair continues to approve release process changes for Lumen production. The older weekly release memo is superseded for production by the later authorized decision."
    },
    "correct": true,
    "grade": {
@@ -540,8 +537,8 @@
    ],
    "usage": {
     "requests": 2,
-    "in": 2818,
-    "out": 223,
+    "in": 2849,
+    "out": 239,
     "tool_calls": 4
    }
   },
@@ -550,7 +547,7 @@
    "mode": "graph",
    "answer": {
     "status": "UNKNOWN",
-    "explanation": "I could not find a supported decision that answers how often Beacon staging releases. The only applicable decision returned for staging is about Redis session storage, while a release-frequency decision was set aside and therefore does not currently apply."
+    "explanation": "I couldn\u2019t find any supported decision that states how often Beacon staging releases. The only applicable decision returned for staging is about Redis session storage (D4), and the release-frequency note D10 was set aside, so there is no supported current decision to answer from."
    },
    "correct": true,
    "grade": {
@@ -561,8 +558,8 @@
    "unsupported_citations": [],
    "usage": {
     "requests": 3,
-    "in": 2048,
-    "out": 118,
+    "in": 2056,
+    "out": 128,
     "tool_calls": 3
    }
   },
@@ -571,7 +568,7 @@
    "mode": "flat",
    "answer": {
     "status": "UNKNOWN",
-    "explanation": "I found a staging release note saying Beacon staging releases on every merge, but the approver is not authorized for staging, so I can't treat it as an approved current decision. I did not find another supported authorized decision for staging release frequency."
+    "explanation": "No supported decision about Beacon staging release frequency was found. The only staging release note I found is not from an authorized approver for release process changes, so it does not establish the current policy."
    },
    "correct": true,
    "grade": {
@@ -581,10 +578,10 @@
    },
    "unsupported_citations": [],
    "usage": {
-    "requests": 4,
-    "in": 3738,
-    "out": 228,
-    "tool_calls": 4
+    "requests": 2,
+    "in": 1390,
+    "out": 104,
+    "tool_calls": 2
    }
   },
   {
@@ -593,11 +590,11 @@
    "answer": {
     "status": "ANSWER",
     "decision": "D5",
-    "owner": "dee",
+    "owner": "neha",
     "cited_passages": [
      "P10"
     ],
-    "explanation": "Beacon production (lumen/prod) will keep web sessions in Memcached on 2027-01-15. The currently applicable approved decision is D5, effective 2026-12-01, which replaces the earlier Redis session store for production only. Owner: Dee Laine."
+    "explanation": "Beacon (Lumen) production keeps web sessions in Memcached on 2027-01-15. This is set by D5, which is effective from 2026-12-01 and explicitly replaces the prior production Redis choice only for production. The decision is approved and owned by Neha Iyer."
    },
    "correct": true,
    "grade": {
@@ -611,8 +608,8 @@
    "unsupported_citations": [],
    "usage": {
     "requests": 4,
-    "in": 3327,
-    "out": 210,
+    "in": 3361,
+    "out": 215,
     "tool_calls": 5
    }
   },
@@ -622,13 +619,13 @@
    "answer": {
     "status": "ANSWER",
     "decision": "D5",
-    "owner": "dee",
+    "owner": "neha",
     "cited_passages": [
      "P10",
-     "P09",
-     "P08"
+     "P08",
+     "P09"
     ],
-    "explanation": "On 2027-01-15, Beacon production keeps web sessions in Memcached. The applicable approved decision is D5, effective 2026-12-01, which replaces ADR-4 for production only. D5 is approved and owned by Dee Laine, and the governance charter confirms Dee approves architecture for Lumen/Beacon production and staging."
+    "explanation": "Beacon production will keep web sessions in Memcached on 2027-01-15. Decision D5 applies because it is effective from 2026-12-01 for production only, and it replaces the earlier Redis decision for production. The choice is owned by Neha Iyer, who is authorized for Beacon architecture in production."
    },
    "correct": true,
    "grade": {
@@ -644,8 +641,8 @@
    ],
    "usage": {
     "requests": 2,
-    "in": 3205,
-    "out": 246,
+    "in": 3244,
+    "out": 242,
     "tool_calls": 4
    }
   },
@@ -655,11 +652,11 @@
    "answer": {
     "status": "ANSWER",
     "decision": "D1",
-    "owner": "ana",
+    "owner": "priya",
     "cited_passages": [
      "P02"
     ],
-    "explanation": "Harbor staging exports customer data in real time. The applicable decision on 2027-03-01 for harbor/staging is D1, and its rationale says Harbor exports customer data in real time in production and staging because partner dashboards need fresh data. The accountable owner is Ana Ruiz (ana)."
+    "explanation": "On 2027-03-01, Harbor staging exports customer data in real time. The applicable staging decision is D1, which says Harbor exports customer data in real time in production and staging because partner dashboards need fresh data. It is approved and owned by Priya Sharma."
    },
    "correct": true,
    "grade": {
@@ -673,8 +670,8 @@
    "unsupported_citations": [],
    "usage": {
     "requests": 4,
-    "in": 3300,
-    "out": 213,
+    "in": 3335,
+    "out": 210,
     "tool_calls": 5
    }
   },
@@ -684,12 +681,11 @@
    "answer": {
     "status": "ANSWER",
     "decision": "D1",
-    "owner": "ana",
+    "owner": "priya",
     "cited_passages": [
-     "P02",
-     "P01"
+     "P02"
     ],
-    "explanation": "On 2027-03-01, Harbor staging exports customer data in real time. The governing decision is ADR-1, which applies to both production and staging and was approved by an authorized approver; it is owned by Ana Ruiz. A later incident note mentions a nightly batch removing peak load, but it is not an approved decision and does not override ADR-1."
+    "explanation": "On 2027-03-01, Harbor staging exports customer data in real time. The applicable approved decision is ADR-1 (D1), which explicitly covers production and staging and says it is approved and owned by Priya Sharma."
    },
    "correct": true,
    "grade": {
@@ -703,9 +699,9 @@
    "unsupported_citations": [],
    "usage": {
     "requests": 2,
-    "in": 1661,
-    "out": 163,
-    "tool_calls": 2
+    "in": 2945,
+    "out": 225,
+    "tool_calls": 4
    }
   },
   {
@@ -714,11 +710,11 @@
    "answer": {
     "status": "ANSWER",
     "decision": "D6",
-    "owner": "eli",
+    "owner": "vikram",
     "cited_passages": [
      "P11"
     ],
-    "explanation": "On 2026-03-01, Beacon production (Lumen/prod) releases once a week, specifically on Tuesday. The approved decision is D6, and the accountable owner is Eli Varga (eli)."
+    "explanation": "Beacon\u2019s production release cadence is weekly. The applicable approved decision is D6, effective for production on 2026-03-01. Its rationale says Lumen production releases once a week on Tuesday, and it is approved and owned by Vikram Rao."
    },
    "correct": true,
    "grade": {
@@ -732,8 +728,8 @@
    "unsupported_citations": [],
    "usage": {
     "requests": 4,
-    "in": 3181,
-    "out": 195,
+    "in": 3186,
+    "out": 204,
     "tool_calls": 5
    }
   },
@@ -743,11 +739,11 @@
    "answer": {
     "status": "ANSWER",
     "decision": "D6",
-    "owner": "eli",
+    "owner": "vikram",
     "cited_passages": [
      "P11"
     ],
-    "explanation": "Beacon production releases once a week on Tuesday. This decision is approved and owned by Eli Varga."
+    "explanation": "Beacon production releases once a week on Tuesday. The approved and owned decision is D6, owned by Vikram Rao."
    },
    "correct": true,
    "grade": {
@@ -760,10 +756,10 @@
    },
    "unsupported_citations": [],
    "usage": {
-    "requests": 3,
-    "in": 3173,
-    "out": 173,
-    "tool_calls": 4
+    "requests": 2,
+    "in": 1815,
+    "out": 159,
+    "tool_calls": 3
    }
   }
  ]

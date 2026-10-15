@@ -1,47 +1,97 @@
-# DecisionTrail
+<h1 align="center">DecisionTrail</h1>
+<p align="center">Why does this project currently do this? The answer, with proof.</p>
 
-**Why does this project currently do this?**
+[![Watch the demo film: Newest is not current. The outdated page is set aside and the approved decision is shown with its sources](docs/hero.png)](https://www.youtube.com/watch?v=Pa6kRGiwNjc)
 
-A new engineer reads the architecture page: Harbor exports customer data in real time. Production actually runs a nightly batch. DecisionTrail answers with the decision that applies, the reason, the accountable owner and the exact passages behind each link.
+<p align="center"><b><a href="https://www.youtube.com/watch?v=Pa6kRGiwNjc">▶ Watch the demo film (5.5 min)</a></b></p>
 
-"Current" does not mean newest. It means approved and in scope at the requested date:
+<p align="center"><sub>Graph Hacks · Company Brain · Built on FalkorDB</sub></p>
 
-- A replacement applies only where it was granted. Production can change while staging keeps the old decision.
-- A newer note from someone without authority does not override an approved decision.
-- A decision can be approved now and take effect later.
-- If two equally authoritative decisions both apply, the answer is **CONFLICT**. No tie-breaker is invented.
-- If no supported decision applies, the answer is **UNKNOWN**.
-- A relationship counts only if its cited passage actually states it. A passage that mentions two things does not link them.
+## The newest document isn't the answer.
 
-**Demo video:** https://www.youtube.com/watch?v=Pa6kRGiwNjc
+A new engineer reads the architecture page: Harbor exports customer data in real time. Production
+actually runs a nightly batch. DecisionTrail returns the decision that applies now, the reason,
+the accountable owner, and the exact source passage behind every link.
 
-Track: **Company Brain**. All companies, people and documents are fictional.
+## Current means approved and in scope.
 
-## Graph model
+- **Scope.** A replacement applies only where it was granted. Production can change while staging
+  keeps the old decision.
+- **Authority.** A newer note from someone without authority does not override an approved
+  decision.
+- **Time.** A decision can be approved now and take effect later.
+- **Conflict.** If two equally authorized decisions both apply, the answer is CONFLICT. No
+  tie-breaker is invented.
+- **Proof.** A link counts only if its cited passage states it. A passage that only mentions two
+  things does not connect them.
 
+## FalkorDB decides. The model explains.
+
+1. **Resolve.** One Cypher query walks from the environment to every decision in effect on the
+   date.
+2. **Check.** It keeps a decision only if its approver holds authority there, and every edge on
+   the way is stated by its cited passage.
+3. **Supersede.** It drops any decision that a valid newer one replaced in that same scope.
+4. **Answer.** One result is an answer, two or more is a conflict, none is unknown. An optional
+   agent explains the result; the server checks every id and citation it submits.
+
+## Tested on held-out cases.
+
+**12/12** held-out cases with the graph · **9/12** for a passage index with the same facts and
+authority filter · **12/12 in both runs** for an agent using the graph tools, with zero
+unsupported citations · [How it was measured](docs/EVALUATION.md)
+
+## Run it.
+
+```bash
+docker run -d --name falkordb -p 6379:6379 falkordb/falkordb:latest
+pip install -r requirements.txt
+python gate.py           # feasibility gate, no model needed
+python eval.py           # deterministic eval vs. oracle and baseline, no model needed
+python server.py         # demo on http://localhost:8001
 ```
-(Project)-[:HAS_SCOPE]->(Scope {env})
-(Project)-[:HAS_REQUIREMENT]->(Requirement)
-(Decision {from, to})-[:APPLIES_TO]->(Scope)
-(Decision)-[:ADDRESSES]->(Requirement)
-(Decision)-[:SUPERSEDES {scope}]->(Decision)
-(Decision)-[:APPROVED_BY]->(Person)-[:AUTHORIZED_FOR]->(Scope)
-(Decision)-[:OWNED_BY {from}]->(Person)
-(Decision)-[:SUPPORTED_BY]->(Passage)        rationale
-(Passage {doc, rev, text, claims})
-```
 
-Every relationship carries `src`, a passage id. The passage's `claims` list is a separate relation-evidence ledger. A query uses an edge only if `src` lists that exact claim.
+The agent needs `OPENAI_API_KEY` set in your environment. Run `python agent.py dev01 graph` for
+one case.
 
-## Core query
+---
 
-Which decisions apply to a scope at a date (abridged, full text in `decisiontrail.py`):
+## Reference
+
+### Graph model
+
+| Node | Meaning |
+|---|---|
+| `Project {id, name, aliases}` | A project, found by name or alias |
+| `Scope {id, env}` | An environment of a project, such as production or staging |
+| `Requirement {id, text}` | The question a decision answers, such as how data is exported |
+| `Decision {id, title, from, to}` | A decision with its effective dates |
+| `Person {id, name}` | Someone who approves or owns decisions |
+| `Passage {id, doc, rev, text, claims}` | An exact source passage and the relations it states |
+
+| Edge | From → to | Meaning |
+|---|---|---|
+| `APPLIES_TO` | Decision → Scope | The decision governs that environment |
+| `ADDRESSES` | Decision → Requirement | The question it answers |
+| `SUPERSEDES {scope}` | Decision → Decision | Replaces an older decision in one scope only |
+| `APPROVED_BY` | Decision → Person | Who approved it |
+| `AUTHORIZED_FOR {to, end}` | Person → Scope | Authority to approve there; can be ended by a later passage |
+| `OWNED_BY {from}` | Decision → Person | Accountable owner from a date |
+| `SUPPORTED_BY` | Decision → Passage | The rationale |
+
+Every edge carries `src`, the id of the passage it came from. A query uses an edge only if that
+passage's `claims` list contains it. All data is fictional and curated, in `fixture.json` and
+`heldout.json`.
+
+### Core query
+
+Which decisions apply to a scope at a date (abridged; full text in `decisiontrail.py`):
 
 ```cypher
 MATCH (s:Scope {id:$scope})<-[a:APPLIES_TO]-(d:Decision)-[ad:ADDRESSES]->(r:Requirement)
 WHERE d.from <= $t AND (d.to IS NULL OR $t < d.to)
 MATCH (d)-[b:APPROVED_BY]->(p:Person)-[z:AUTHORIZED_FOR]->(s)
-// each of a, ad, b, z must be claimed by its cited passage:
+// each edge must be stated by its cited passage
 MATCH (ap:Passage) WHERE ap.id = a.src AND d.id+'|APPLIES_TO|'+s.id IN ap.claims
 ...
 // drop decisions another admissible decision supersedes in this scope
@@ -51,73 +101,41 @@ WITH row, d, count(xp) AS beaten WHERE beaten = 0
 RETURN row.r.id AS req, d.id AS decision, row.ev AS evidence
 ```
 
-One result per requirement is an answer. Two or more is a conflict. None is unknown. Owner, rationale and the replaced decision are three more short supported-edge queries.
+Owner, rationale, the replaced decision and the full evidence trail are short supported-edge
+queries in the same file.
 
-## Agent tools
+### Agent
 
-`resolve_project`, `applicable_decisions`, `trace_rationale`, `resolve_owner`, `read_passage`, `answer_or_abstain`. Each one runs Cypher and only reads data. The server checks each submitted answer: the ids must exist, citations must be known passages, and the approver must hold authority for that environment. The checker does not reveal the right answer.
+The model (default `gpt-5.4-mini`) acts only through six read-only tools: `resolve_project`,
+`applicable_decisions`, `trace_rationale`, `resolve_owner`, `read_passage` and
+`answer_or_abstain`. It cannot write Cypher. The server checks each submitted answer: ids must
+exist, citations must be known passages, and the approver must hold authority for that
+environment on that date. The checker does not reveal the right answer.
 
-## Results
-
-**Feasibility gate** (`python gate.py`): 6/6. The gate has four passages, an authorized replacement, two scopes, a newer unauthorized note, and then a conflict and two unsupported relations. No kill condition was hit, and two runs returned identical traces. The trace is in `results/gate_trace.json`.
-
-**Deterministic eval** (`python eval.py`, no model). An authored answer ledger supplies the expected answers. The ledger must also agree with `oracle.py`, an independent Python reducer that shares no code with the graph queries. The baseline is a structured passage index over the same durable facts: project, environment, effective date, topic, approver and owner. It uses the same authority guard, and the newest authorized passage wins.
-
-| | Graph, dev | Baseline, dev | Graph, held-out | Baseline, held-out |
-|---|---:|---:|---:|---:|
-| Cases fully correct | 12/12 | 9/12 | 12/12 | 9/12 |
-| Current decision | 10/10 | 10/10 | 11/11 | 11/11 |
-| Owner | 10/10 | 10/10 | 11/11 | 9/11 |
-| Rationale passages exact | 10/10 | 8/10 | 11/11 | 10/11 |
-| Correct conflict/unknown | 2/2 | 1/2 | 1/1 | 1/1 |
-| Wrong or unwarranted answers | 0 | 1 | 0 | 0 |
-
-The baseline picks the right decision every time. It loses where the reason or owner sits one hop away: an incident postmortem that justifies a decision, an ownership transfer inside an active decision, and a conflict it resolves by date. Held-out mutations were written after the dev fixture, prompts and oracle were committed. They cover a rename, partial supersession, a future-effective replacement, a corrected owner, revoked authority, an unauthorized scoped note and a false bridge.
-
-**Regression case h13** was added after the first held-out run. It asks about a past date, before an approver's authority was ended by a later charter. The graph and the baseline both answer it correctly.
-
-**Agent eval** (`python agent_eval.py h01 ... h13`, gpt-5.4-mini). Both modes used the same model, prompt, six-turn budget and answer checker. Graph mode uses the FalkorDB tools; flat mode uses a search over the same passage index as the baseline. Each mode was run twice over the 12 held-out cases.
-
-| | Graph tools, run 1 | Graph tools, run 2 | Flat index, run 1 | Flat index, run 2 |
-|---|---:|---:|---:|---:|
-| Held-out cases fully correct | 12/12 | 12/12 | 10/12 | 9/12 |
-| Unsupported citations | 0 | 0 | 2 | 3 |
-| Regression case h13 | correct | correct | correct | correct |
-
-The two runs together took 167 requests, 162,264 input tokens and 10,960 output tokens. In flat mode, the model named the previous owner after an ownership transfer (h01, h02). In one run it also called a conflict between a decision and the newer decision that replaced it for staging only (h04). It cited passages that do not support the decision it answered with. Graph mode got every case right and cited only supporting passages.
-
-**How the agent harness changed.** Before these final runs, the harness was fixed several times after looking at held-out runs. Every fix applied to both modes:
-
-1. The flat search now applies its environment filter.
-2. The checker forces an answer on the final turns, with two spare turns to fix a rejected answer.
-3. A plain-text reply gets the same nudge in both modes.
-4. An answer sent in the same turn as lookups no longer ends the run; the latest accepted answer counts.
-5. The answer field now says it expects a decision id such as D3.
-6. Authority in the checker and the flat search is evaluated at the requested date.
-7. The turn budget went from five to six.
-8. One prompt sentence was added: pass the given date to every dated tool.
-
-The earlier runs scored from 4/12 to 11/12 for flat and from 10/12 to 12/12 for graph. Those runs were set aside because of these harness bugs, not because of their scores. The deterministic graph resolver and the oracle did not change during this work, apart from adding authority end dates, which the h13 case covers.
-
-## Run
+### Commands
 
 ```bash
-docker run -p 6379:6379 -d falkordb/falkordb
-pip install -r requirements.txt
-python gate.py
-python eval.py
-python server.py        # http://localhost:8001
+python agent.py dev01 graph              # one agent run in the terminal
+python agent_eval.py h01 h02 ... h13     # paired graph vs. flat agent runs (costs API credit)
 ```
 
-The agent needs `OPENAI_API_KEY`. Run `python agent.py dev01 graph` for one case.
+### Limitations
 
-## Limits
+Curated import only: no parser, connector or automatic extraction. Authority start dates are not
+modeled. Passage support is an authored claims list; it proves the source states a relation, not
+that the relation is true in the real world. Two projects and about twenty cases cannot show
+general performance. Recursive SQL could run the same joins; the point is that FalkorDB holds the
+connected state and returns paths you can inspect.
 
-- Curated import only. There is no parser, connector or automatic extraction.
-- Authority can end on a date, but only when a supported later passage ends it. Authority start dates are not modeled.
-- Passage support is an authored claims list. It proves that the source states the relation. It does not prove the relation is true in the real world.
-- Two projects and about twenty cases cannot show general performance. Recursive SQL could run the same joins. The point here is that FalkorDB holds the connected state and returns paths you can inspect.
+### AI disclosure
 
-## AI disclosure
+An AI coding assistant was used to generate and debug code and to draft documentation. At
+runtime, an LLM (OpenAI `gpt-5.4-mini` by default) is the optional agent that explains answers;
+the graph decides them. Every result reported here came from running the code in this repository.
 
-The code, fixtures and this README were written with help from an AI coding assistant. The author reviewed and ran everything.
+### Files
+
+`decisiontrail.py` graph model, queries and tools · `agent.py` tool-calling loop · `oracle.py`
+independent reducer · `baseline.py` matched passage index · `gate.py` feasibility gate ·
+`eval.py` deterministic eval · `agent_eval.py` paired agent runs · `server.py`, `static/` demo UI ·
+`results/` raw eval records · `docs/EVALUATION.md` full eval history

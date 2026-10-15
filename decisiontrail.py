@@ -8,6 +8,7 @@ that merely mentions two entities cannot bridge them.
 import falkordb
 
 HOST, PORT = "localhost", 6379
+RELS = {"APPLIES_TO", "SUPERSEDES", "APPROVED_BY", "OWNED_BY", "ADDRESSES", "SUPPORTED_BY", "AUTHORIZED_FOR"}
 
 
 def key(a, rel, b, scope=None):
@@ -18,6 +19,17 @@ def connect(name):
     return falkordb.FalkorDB(host=HOST, port=PORT).select_graph(name)
 
 
+def parse_relation(r):
+    """'TYPE a b src [extra]' -> dict. extra is the scope (SUPERSEDES) or start date (OWNED_BY)."""
+    if isinstance(r, dict):
+        return r
+    t, a, b, src, *extra = r.split()
+    d = {"type": t, "a": a, "b": b, "src": src}
+    if extra:
+        d["scope" if t == "SUPERSEDES" else "from"] = extra[0]
+    return d
+
+
 def load(g, fx):
     try:
         g.delete()
@@ -25,7 +37,7 @@ def load(g, fx):
         pass
     q = g.query
     for p in fx["projects"]:
-        q("CREATE (:Project {id:$id, name:$name})", p)
+        q("CREATE (:Project {id:$id, name:$name, aliases:$aliases})", {"aliases": [], **p})
     for s in fx["scopes"]:
         q("MATCH (p:Project {id:$project}) CREATE (p)-[:HAS_SCOPE]->(:Scope {id:$id, env:$env})", s)
     for p in fx["people"]:
@@ -37,22 +49,22 @@ def load(g, fx):
     for d in fx["decisions"]:
         q("CREATE (:Decision {id:$id, title:$title, from:$from, to:$to})", {"to": None, **d})
     for r in fx["relations"]:
-        add_relation(g, r)
+        add_relation(g, parse_relation(r))
 
 
 def add_relation(g, r):
     t = r["type"]
-    assert t in {"APPLIES_TO", "SUPERSEDES", "APPROVED_BY", "OWNED_BY", "ADDRESSES",
-                 "SUPPORTED_BY", "AUTHORIZED_FOR"}, t
-    props = "{src:$src, scope:$scope}" if t == "SUPERSEDES" else "{src:$src}"
+    assert t in RELS, t
+    props = {"SUPERSEDES": "{src:$src, scope:$scope}", "OWNED_BY": "{src:$src, from:$from}"}.get(t, "{src:$src}")
     g.query(f"MATCH (a {{id:$a}}), (b {{id:$b}}) CREATE (a)-[:{t} {props}]->(b)",
-            {"a": r["a"], "b": r["b"], "src": r["src"], "scope": r.get("scope")})
+            {"a": r["a"], "b": r["b"], "src": r["src"], "scope": r.get("scope"), "from": r.get("from")})
 
 
-# Admissible = in effect at $t, applies to scope (supported), approved by a
-# person who is authorized for that scope (both supported). Then drop any
-# admissible decision that another admissible decision supersedes in this
-# scope (supported). Remaining decisions grouped by requirement.
+# Admissible = in effect at $t, applies to scope, addresses a requirement,
+# approved by a person authorized for that scope -- each edge supported by
+# its cited passage. Then drop any admissible decision that another
+# admissible decision supersedes in this scope (supported).
+# (The WITH between passage MATCHes works around a FalkorDB planner error.)
 APPLICABLE = """
 MATCH (s:Scope {id:$scope})<-[a:APPLIES_TO]-(d:Decision)-[ad:ADDRESSES]->(r:Requirement)
 WHERE d.from <= $t AND (d.to IS NULL OR $t < d.to)
@@ -74,27 +86,45 @@ WITH s, ids, row, row.d AS d
 OPTIONAL MATCH (d2:Decision)-[x:SUPERSEDES]->(d) WHERE x.scope = s.id AND d2.id IN ids
 OPTIONAL MATCH (xp:Passage) WHERE xp.id = x.src AND d2.id+'|SUPERSEDES|'+d.id+'@'+s.id IN xp.claims
 WITH row, d, count(xp) AS beaten WHERE beaten = 0
-RETURN row.r.id AS req, d.id AS decision, d.title AS title, row.ev AS evidence, row.approvers AS approvers
+RETURN row.r.id AS req, row.r.text AS requirement, d.id AS decision, d.title AS title, d.from AS effective_from,
+       row.ev AS evidence, row.approvers AS approvers
 ORDER BY req, decision
+"""
+
+# Everything that claims to apply here at $t, admissible or not -- so an
+# answer can say what it set aside (obsolete, unauthorized, unsupported).
+CONSIDERED = """
+MATCH (s:Scope {id:$scope})<-[a:APPLIES_TO]-(d:Decision)
+WHERE d.from <= $t AND (d.to IS NULL OR $t < d.to)
+RETURN DISTINCT d.id AS decision, d.title AS title, d.from AS effective_from ORDER BY decision
 """
 
 OWNER = """
 MATCH (d:Decision {id:$d})-[o:OWNED_BY]->(p:Person)
+WHERE o.from IS NULL OR o.from <= $t
+WITH d, o, p
 MATCH (op:Passage) WHERE op.id = o.src AND d.id+'|OWNED_BY|'+p.id IN op.claims
-RETURN p.id AS person, p.name AS name, op.id AS passage ORDER BY person
+RETURN p.id AS person, p.name AS name, o.from AS since, op.id AS passage ORDER BY person
 """
 
 RATIONALE = """
 MATCH (d:Decision {id:$d})-[e:SUPPORTED_BY]->(p:Passage)
+WITH d, e, p
 MATCH (ep:Passage) WHERE ep.id = e.src AND d.id+'|SUPPORTED_BY|'+p.id IN ep.claims
-RETURN p.id AS passage, p.doc AS doc, p.rev AS rev, p.text AS text ORDER BY passage
+RETURN p.id AS passage, p.doc AS doc, p.rev AS rev, p.text AS text, ep.id AS cited_by ORDER BY passage
 """
 
-# Every passage that cited a supersession of the decision, regardless of
-# whether it counted -- lets the answer explain what it ignored.
-SUPERSEDE_ATTEMPTS = """
-MATCH (d2:Decision)-[x:SUPERSEDES]->(d:Decision {id:$d}) WHERE x.scope = $scope
-RETURN d2.id AS by, x.src AS passage ORDER BY by
+REPLACED = """
+MATCH (d:Decision {id:$d})-[x:SUPERSEDES]->(old:Decision)
+WITH d, x, old
+MATCH (xp:Passage) WHERE xp.id = x.src AND d.id+'|SUPERSEDES|'+old.id+'@'+x.scope IN xp.claims
+RETURN old.id AS replaced, old.title AS title, x.scope AS scope, xp.id AS passage ORDER BY replaced
+"""
+
+PROJECT = """
+MATCH (p:Project)-[:HAS_SCOPE]->(s:Scope)
+WHERE toLower(p.name) = toLower($name) OR toLower($name) IN p.aliases OR p.id = toLower($name)
+RETURN p.id AS project, p.name AS name, collect({scope:s.id, env:s.env}) AS scopes
 """
 
 
@@ -104,29 +134,64 @@ def rows(g, q, params):
     return [dict(zip(cols, r)) for r in res.result_set]
 
 
-def applicable(g, scope, t):
-    return rows(g, APPLICABLE, {"scope": scope, "t": t})
+# ---- agent tools (all read-only Cypher) ----
+
+def resolve_project(g, name):
+    found = rows(g, PROJECT, {"name": name.strip()})
+    return found[0] if len(found) == 1 else {"error": f"no unique project named {name!r}", "matches": found}
 
 
-def owners(g, d):
-    return rows(g, OWNER, {"d": d})
+def applicable_decisions(g, scope, t):
+    adm = rows(g, APPLICABLE, {"scope": scope, "t": t})
+    ids = {r["decision"] for r in adm}
+    set_aside = [c for c in rows(g, CONSIDERED, {"scope": scope, "t": t}) if c["decision"] not in ids]
+    for r in adm:
+        r["evidence"] = sorted(set(r["evidence"]))
+    return {"scope": scope, "t": t, "applicable": adm, "set_aside": set_aside}
 
 
-def rationale(g, d):
-    return rows(g, RATIONALE, {"d": d})
+def trace_rationale(g, d):
+    return {"decision": d, "rationale": rows(g, RATIONALE, {"d": d}), "replaces": rows(g, REPLACED, {"d": d})}
+
+
+def read_passage(g, pid):
+    found = rows(g, "MATCH (p:Passage {id:$id}) RETURN p.id AS id, p.doc AS doc, p.rev AS rev, p.text AS text", {"id": pid})
+    return found[0] if found else {"error": f"no passage {pid}"}
+
+
+def resolve_owner(g, d, t):
+    own = rows(g, OWNER, {"d": d, "t": t})
+    if not own:
+        return {"decision": d, "owner": None, "reason": "no supported owner"}
+    latest = max(o["since"] or "" for o in own)
+    top = [o for o in own if (o["since"] or "") == latest]
+    if len({o["person"] for o in top}) > 1:
+        return {"decision": d, "owner": None, "reason": "conflicting owners", "candidates": top}
+    return {"decision": d, "owner": top[0]["person"], "name": top[0]["name"], "passage": top[0]["passage"]}
 
 
 def resolve(g, scope, t, req):
-    """Deterministic answer for (scope, time, requirement)."""
-    cands = [r for r in applicable(g, scope, t) if r["req"] == req]
+    """Deterministic answer for (scope, time, requirement) built from the tools above."""
+    cands = [r for r in applicable_decisions(g, scope, t)["applicable"] if r["req"] == req]
     if not cands:
         return {"status": "UNKNOWN", "reason": "no admissible decision"}
     if len(cands) > 1:
         return {"status": "CONFLICT", "decisions": [c["decision"] for c in cands],
                 "reason": "equally authoritative active decisions"}
     c = cands[0]
-    own = owners(g, c["decision"])
-    owner = own[0]["person"] if len({o["person"] for o in own}) == 1 else None
-    return {"status": "ANSWER", "decision": c["decision"], "owner": owner,
-            "rationale": [p["passage"] for p in rationale(g, c["decision"])],
-            "evidence": sorted(set(c["evidence"]) | {o["passage"] for o in own})}
+    own = resolve_owner(g, c["decision"], t)
+    rat = trace_rationale(g, c["decision"])
+    return {"status": "ANSWER", "decision": c["decision"], "owner": own["owner"],
+            "rationale": [p["passage"] for p in rat["rationale"]],
+            "evidence": sorted(set(c["evidence"]) | ({own["passage"]} if own.get("passage") else set()))}
+
+
+def admissible_citations(g, scope, t, d):
+    """Passages an answer about decision d may cite: its applicability, owner, rationale and replacement chain."""
+    adm = [r for r in applicable_decisions(g, scope, t)["applicable"] if r["decision"] == d]
+    if not adm:
+        return set()
+    own = resolve_owner(g, d, t)
+    rat = trace_rationale(g, d)
+    return (set(adm[0]["evidence"]) | {p["passage"] for p in rat["rationale"]} | {p["cited_by"] for p in rat["rationale"]}
+            | {r["passage"] for r in rat["replaces"]} | ({own["passage"]} if own.get("passage") else set()))

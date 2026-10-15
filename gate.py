@@ -103,7 +103,7 @@ def run_phase(g, phase):
         got = dt.resolve(g, scope, t, "R1")
         ok = all(got.get(k) == v for k, v in exp.items())
         out.append({"phase": phase, "scope": scope, "t": t, "expected": exp, "got": got,
-                    "raw_applicable": dt.applicable(g, scope, t), "ok": ok})
+                    "raw_applicable": dt.applicable_decisions(g, scope, t)["applicable"], "ok": ok})
     return out
 
 

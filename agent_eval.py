@@ -6,7 +6,7 @@ from pathlib import Path
 
 import agent, decisiontrail as dt, eval as ev
 
-CAP = 32
+CAP = 120
 HERE = Path(__file__).parent
 
 fx = ev.heldout_fixture(json.loads((HERE / "fixture.json").read_text()), json.loads((HERE / "heldout.json").read_text()))

@@ -72,7 +72,15 @@ One result per requirement is an answer. Two or more is a conflict. None is unkn
 
 The baseline picks the right decision every time. It loses where the reason or owner sits one hop away: an incident postmortem that justifies a decision, an ownership transfer inside an active decision, and a conflict it resolves by date. Held-out mutations were written after the dev fixture, prompts and oracle were committed. They cover a rename, partial supersession, a future-effective replacement, a corrected owner, revoked authority, an unauthorized scoped note and a false bridge.
 
-**Agent pilot** (`python agent_eval.py`, gpt-5.4-mini, 29 requests in total, under $0.05). With graph tools, 4 of 4 held-out answers were correct and had no unsupported citations. The flat-index runs never submitted an answer. The cause was two harness bugs: the search ignored its environment filter, and no final answer was forced on the last turn. Both bugs are fixed for both modes. The paired flat rerun has not been done yet, so these numbers are not a graph-vs-flat comparison.
+**Agent eval** (`python agent_eval.py h01 ... h12`, gpt-5.4-mini). Both modes used the same model, prompt, five-turn budget and answer checker on all 12 held-out cases. The run took 92 requests, 98,795 input tokens and 6,197 output tokens.
+
+| | Graph tools | Flat index tools |
+|---|---:|---:|
+| Cases fully correct | 10/12 | 4/12 |
+| Unsupported citations | 0 | 1 |
+| Runs with no submitted answer | 1 | 1 |
+
+Flat-index runs mostly failed in two ways. They named the old owner after a transfer, and they abstained when a replacement covered only one environment. The graph agent missed h11, where it said UNKNOWN for a future-effective decision. It also missed h12, where it submitted no answer. An earlier pilot of the flat mode was discarded because of two harness bugs. The search ignored its environment filter, and no final answer was forced on the last turn. Both bugs were fixed in both modes before this run. This is one run per case, so the agent's results vary from run to run.
 
 ## Run
 

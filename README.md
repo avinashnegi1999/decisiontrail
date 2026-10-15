@@ -13,6 +13,8 @@ A new engineer reads the architecture page: Harbor exports customer data in real
 - If no supported decision applies, the answer is **UNKNOWN**.
 - A relationship counts only if its cited passage actually states it. A passage that mentions two things does not link them.
 
+**Demo video:** https://www.youtube.com/watch?v=Pa6kRGiwNjc
+
 Track: **Company Brain**. All companies, people and documents are fictional.
 
 ## Graph model

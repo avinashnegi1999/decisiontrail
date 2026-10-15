@@ -600,5 +600,618 @@
     }
    }
   ]
+ },
+ "heldout": {
+  "ledger_vs_oracle_disagreements": [],
+  "graph": {
+   "cases_fully_correct": "12/12",
+   "status_correct": "12/12",
+   "current_decision_correct": "11/11",
+   "owner_correct": "11/11",
+   "rationale_passages_exact": "11/11",
+   "wrong_or_obsolete_answers": 0,
+   "correct_abstention": "1/1"
+  },
+  "baseline": {
+   "cases_fully_correct": "9/12",
+   "status_correct": "12/12",
+   "current_decision_correct": "11/11",
+   "owner_correct": "9/11",
+   "rationale_passages_exact": "10/11",
+   "wrong_or_obsolete_answers": 0,
+   "correct_abstention": "1/1"
+  },
+  "cases": [
+   {
+    "id": "h01",
+    "scope": "lumen/prod",
+    "t": "2026-10-15",
+    "req": "R3",
+    "expect": {
+     "status": "ANSWER",
+     "decision": "D4",
+     "owner": "eli",
+     "rationale": [
+      "P09"
+     ]
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "ANSWER",
+     "decision": "D4",
+     "owner": "eli",
+     "rationale": [
+      "P09"
+     ],
+     "evidence": [
+      "P08",
+      "P09",
+      "P15"
+     ]
+    },
+    "baseline": {
+     "status": "ANSWER",
+     "decision": "D4",
+     "owner": "dee",
+     "rationale": [
+      "P09"
+     ]
+    },
+    "graph_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "decision": true,
+     "owner": false,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": false
+    }
+   },
+   {
+    "id": "h02",
+    "scope": "lumen/staging",
+    "t": "2026-10-15",
+    "req": "R3",
+    "expect": {
+     "status": "ANSWER",
+     "decision": "D4",
+     "owner": "eli",
+     "rationale": [
+      "P09"
+     ]
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "ANSWER",
+     "decision": "D4",
+     "owner": "eli",
+     "rationale": [
+      "P09"
+     ],
+     "evidence": [
+      "P08",
+      "P09",
+      "P15"
+     ]
+    },
+    "baseline": {
+     "status": "ANSWER",
+     "decision": "D4",
+     "owner": "dee",
+     "rationale": [
+      "P09"
+     ]
+    },
+    "graph_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "decision": true,
+     "owner": false,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": false
+    }
+   },
+   {
+    "id": "h03",
+    "scope": "lumen/prod",
+    "t": "2026-07-01",
+    "req": "R3",
+    "expect": {
+     "status": "ANSWER",
+     "decision": "D4",
+     "owner": "dee",
+     "rationale": [
+      "P09"
+     ]
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "ANSWER",
+     "decision": "D4",
+     "owner": "dee",
+     "rationale": [
+      "P09"
+     ],
+     "evidence": [
+      "P08",
+      "P09"
+     ]
+    },
+    "baseline": {
+     "status": "ANSWER",
+     "decision": "D4",
+     "owner": "dee",
+     "rationale": [
+      "P09"
+     ]
+    },
+    "graph_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    }
+   },
+   {
+    "id": "h04",
+    "scope": "harbor/staging",
+    "t": "2026-10-15",
+    "req": "R2",
+    "expect": {
+     "status": "ANSWER",
+     "decision": "D8",
+     "owner": "ana",
+     "rationale": [
+      "P13"
+     ]
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "ANSWER",
+     "decision": "D8",
+     "owner": "ana",
+     "rationale": [
+      "P13"
+     ],
+     "evidence": [
+      "P01",
+      "P13"
+     ]
+    },
+    "baseline": {
+     "status": "ANSWER",
+     "decision": "D8",
+     "owner": "ana",
+     "rationale": [
+      "P13"
+     ]
+    },
+    "graph_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    }
+   },
+   {
+    "id": "h05",
+    "scope": "harbor/prod",
+    "t": "2026-10-15",
+    "req": "R2",
+    "expect": {
+     "status": "ANSWER",
+     "decision": "D3",
+     "owner": "ana",
+     "rationale": [
+      "P06"
+     ]
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "ANSWER",
+     "decision": "D3",
+     "owner": "ana",
+     "rationale": [
+      "P06"
+     ],
+     "evidence": [
+      "P01",
+      "P06"
+     ]
+    },
+    "baseline": {
+     "status": "ANSWER",
+     "decision": "D3",
+     "owner": "ana",
+     "rationale": [
+      "P06"
+     ]
+    },
+    "graph_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    }
+   },
+   {
+    "id": "h06",
+    "scope": "harbor/prod",
+    "t": "2026-10-15",
+    "req": "R1",
+    "expect": {
+     "status": "ANSWER",
+     "decision": "D2",
+     "owner": "ben",
+     "rationale": [
+      "P04"
+     ]
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "ANSWER",
+     "decision": "D2",
+     "owner": "ben",
+     "rationale": [
+      "P04"
+     ],
+     "evidence": [
+      "P01",
+      "P03"
+     ]
+    },
+    "baseline": {
+     "status": "ANSWER",
+     "decision": "D2",
+     "owner": "ben",
+     "rationale": [
+      "P03"
+     ]
+    },
+    "graph_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": false,
+     "wrong_answer": false,
+     "all": false
+    }
+   },
+   {
+    "id": "h07",
+    "scope": "harbor/prod",
+    "t": "2027-03-01",
+    "req": "R1",
+    "expect": {
+     "status": "ANSWER",
+     "decision": "D9",
+     "owner": "ben",
+     "rationale": [
+      "P14"
+     ]
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "ANSWER",
+     "decision": "D9",
+     "owner": "ben",
+     "rationale": [
+      "P14"
+     ],
+     "evidence": [
+      "P01",
+      "P14"
+     ]
+    },
+    "baseline": {
+     "status": "ANSWER",
+     "decision": "D9",
+     "owner": "ben",
+     "rationale": [
+      "P14"
+     ]
+    },
+    "graph_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    }
+   },
+   {
+    "id": "h08",
+    "scope": "harbor/staging",
+    "t": "2026-10-15",
+    "req": "R1",
+    "expect": {
+     "status": "ANSWER",
+     "decision": "D1",
+     "owner": "ana",
+     "rationale": [
+      "P02"
+     ]
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "ANSWER",
+     "decision": "D1",
+     "owner": "ana",
+     "rationale": [
+      "P02"
+     ],
+     "evidence": [
+      "P01",
+      "P02"
+     ]
+    },
+    "baseline": {
+     "status": "ANSWER",
+     "decision": "D1",
+     "owner": "ana",
+     "rationale": [
+      "P02"
+     ]
+    },
+    "graph_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    }
+   },
+   {
+    "id": "h09",
+    "scope": "lumen/prod",
+    "t": "2026-10-15",
+    "req": "R4",
+    "expect": {
+     "status": "ANSWER",
+     "decision": "D7",
+     "owner": "fay",
+     "rationale": [
+      "P12"
+     ]
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "ANSWER",
+     "decision": "D7",
+     "owner": "fay",
+     "rationale": [
+      "P12"
+     ],
+     "evidence": [
+      "P08",
+      "P12"
+     ]
+    },
+    "baseline": {
+     "status": "ANSWER",
+     "decision": "D7",
+     "owner": "fay",
+     "rationale": [
+      "P12"
+     ]
+    },
+    "graph_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    }
+   },
+   {
+    "id": "h10",
+    "scope": "lumen/staging",
+    "t": "2026-10-15",
+    "req": "R4",
+    "expect": {
+     "status": "UNKNOWN"
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "UNKNOWN",
+     "reason": "no admissible decision"
+    },
+    "baseline": {
+     "status": "UNKNOWN"
+    },
+    "graph_grade": {
+     "status": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "wrong_answer": false,
+     "all": true
+    }
+   },
+   {
+    "id": "h11",
+    "scope": "lumen/prod",
+    "t": "2027-01-15",
+    "req": "R3",
+    "expect": {
+     "status": "ANSWER",
+     "decision": "D5",
+     "owner": "dee",
+     "rationale": [
+      "P10"
+     ]
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "ANSWER",
+     "decision": "D5",
+     "owner": "dee",
+     "rationale": [
+      "P10"
+     ],
+     "evidence": [
+      "P08",
+      "P10"
+     ]
+    },
+    "baseline": {
+     "status": "ANSWER",
+     "decision": "D5",
+     "owner": "dee",
+     "rationale": [
+      "P10"
+     ]
+    },
+    "graph_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    }
+   },
+   {
+    "id": "h12",
+    "scope": "harbor/staging",
+    "t": "2027-03-01",
+    "req": "R1",
+    "expect": {
+     "status": "ANSWER",
+     "decision": "D1",
+     "owner": "ana",
+     "rationale": [
+      "P02"
+     ]
+    },
+    "ledger_agrees_with_oracle": true,
+    "graph": {
+     "status": "ANSWER",
+     "decision": "D1",
+     "owner": "ana",
+     "rationale": [
+      "P02"
+     ],
+     "evidence": [
+      "P01",
+      "P02"
+     ]
+    },
+    "baseline": {
+     "status": "ANSWER",
+     "decision": "D1",
+     "owner": "ana",
+     "rationale": [
+      "P02"
+     ]
+    },
+    "graph_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    },
+    "baseline_grade": {
+     "status": true,
+     "decision": true,
+     "owner": true,
+     "rationale": true,
+     "wrong_answer": false,
+     "all": true
+    }
+   }
+  ]
  }
 }

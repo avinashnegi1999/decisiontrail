@@ -21,6 +21,8 @@ def heldout_fixture(dev, spec):
             p["name"] = m["name"]
         elif op == "add_passage":
             fx["passages"].append(m["passage"])
+        elif op == "replace_passage":
+            fx["passages"] = [m["passage"] if p["id"] == m["passage"]["id"] else p for p in fx["passages"]]
         elif op == "add_decision":
             fx["decisions"].append(m["decision"])
         elif op == "add_relation":

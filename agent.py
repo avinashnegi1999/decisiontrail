@@ -51,7 +51,8 @@ SYSTEM = """You answer an employee's question: why does this project currently d
 "Currently" means the decision that applies at the given date and environment under approved authority -- not the
 newest document. A newer note from someone without authority does not override an approved decision. A replacement
 may apply to one environment only. If two equally authoritative decisions both apply, answer CONFLICT; if no
-supported decision applies, answer UNKNOWN. Cite only passage ids you saw in tool results. Call independent tools
+supported decision applies, answer UNKNOWN. Pass the given Date as t to every dated tool; the date may be in the
+future, and decisions effective by then apply. Cite only passage ids you saw in tool results. Call independent tools
 in parallel. Finish by calling answer_or_abstain exactly once."""
 
 
@@ -136,9 +137,9 @@ def run(case, fx, mode, emit=print):
     msgs = [{"role": "system", "content": SYSTEM},
             {"role": "user", "content": f"Date: {case['t']}. Project: {case['project']}. Environment: {case['env']}.\n{case['q']}"}]
     usage = {"requests": 0, "in": 0, "out": 0, "tool_calls": 0}
-    for turn in range(MAX_TURNS):
-        # last turn: force a submission so a run never ends without an answer (both modes)
-        choice = {"type": "function", "function": {"name": "answer_or_abstain"}} if turn == MAX_TURNS - 1 else "auto"
+    for turn in range(MAX_TURNS + 2):
+        # from the last turn on, force a submission; two spare turns let a rejected answer be fixed (both modes)
+        choice = {"type": "function", "function": {"name": "answer_or_abstain"}} if turn >= MAX_TURNS - 1 else "auto"
         r = client.chat.completions.create(model=MODEL, messages=msgs, tools=tools, tool_choice=choice,
                                            max_completion_tokens=900)
         usage["requests"] += 1

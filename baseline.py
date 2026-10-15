@@ -12,7 +12,9 @@ def index(fx):
     """One row per passage: project, effective date, envs named in the text,
     topic, approver, owner -- all from the same curated fixture."""
     dec = {d["id"]: d for d in fx["decisions"]}
-    auth = {(c.split("|")[0], c.split("|")[2]) for p in fx["passages"] for c in p["claims"] if "|AUTHORIZED_FOR|" in c}
+    claims = [c for p in fx["passages"] for c in p["claims"] if "|AUTHORIZED_FOR|" in c]
+    ended = {c[:-len("|ENDS")] for c in claims if c.endswith("|ENDS")}  # current charter only
+    auth = {(c.split("|")[0], c.split("|")[2]) for c in claims if not c.endswith("|ENDS") and c not in ended}
     scope_env = {s["id"]: (s["project"], s["env"]) for s in fx["scopes"]}
     rows = []
     for p in fx["passages"]:

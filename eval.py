@@ -90,7 +90,9 @@ if __name__ == "__main__":
     dev = json.loads((HERE / "fixture.json").read_text())
     splits = {"dev": dev}
     if (HERE / "heldout.json").exists():
-        splits["heldout"] = heldout_fixture(dev, json.loads((HERE / "heldout.json").read_text()))
+        ho = heldout_fixture(dev, json.loads((HERE / "heldout.json").read_text()))
+        splits["heldout"] = {**ho, "cases": [c for c in ho["cases"] if not c.get("post_hoc")]}
+        splits["regression"] = {**ho, "cases": [c for c in ho["cases"] if c.get("post_hoc")]}
     report = {}
     for name, fx in splits.items():
         rows = run_split(name, fx)

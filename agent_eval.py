@@ -1,12 +1,12 @@
 """Paid agent eval on a few held-out cases, graph tools vs flat index, same model,
 prompt, turn budget and validator. Hard cap on total model requests.
 Run: python agent_eval.py h04 h01 ...   (writes results/agent_eval.json)"""
-import json, sys
+import json, os, sys
 from pathlib import Path
 
 import agent, decisiontrail as dt, eval as ev
 
-CAP = 120
+CAP = 240
 HERE = Path(__file__).parent
 
 fx = ev.heldout_fixture(json.loads((HERE / "fixture.json").read_text()), json.loads((HERE / "heldout.json").read_text()))
@@ -17,7 +17,7 @@ for cid in sys.argv[1:]:
     c = next(c for c in fx["cases"] if c["id"] == cid)
     scope = ev.scope_for(fx, c["project"], c["env"])
     for mode in ("graph", "flat"):
-        if used + agent.MAX_TURNS > CAP:
+        if used + agent.MAX_TURNS + 2 > CAP:
             print("request cap reached; stopping")
             break
         r = agent.run(c, fx, mode, emit=lambda e: None)
@@ -38,4 +38,4 @@ for cid in sys.argv[1:]:
 tot = {k: sum(r["usage"][k] for r in out) for k in ("requests", "in", "out")}
 print("total usage", tot)
 (HERE / "results").mkdir(exist_ok=True)
-(HERE / "results" / "agent_eval.json").write_text(json.dumps({"total_usage": tot, "runs": out}, indent=1))
+(HERE / "results" / f"agent_eval{os.environ.get('RUN_TAG', '')}.json").write_text(json.dumps({"total_usage": tot, "runs": out}, indent=1))

@@ -6,7 +6,9 @@ def _rels(fx):
     out = []
     for r in fx["relations"]:
         t, a, b, src, *extra = r.split()
-        out.append((t, a, b, src, extra[0] if extra else None))
+        kv = dict(x.split("=", 1) for x in extra if "=" in x)
+        pos = [x for x in extra if "=" not in x]
+        out.append((t, a, b, src, pos[0] if pos else None, kv))
     return out
 
 
@@ -14,10 +16,13 @@ def oracle(fx, project_scope, t, req):
     claims = {p["id"]: set(p["claims"]) for p in fx["passages"]}
     dec = {d["id"]: d for d in fx["decisions"]}
     rels = []
-    for t_, a, b, src, extra in _rels(fx):
+    for t_, a, b, src, extra, kv in _rels(fx):
         claim = f"{a}|{t_}|{b}" + (f"@{extra}" if t_ == "SUPERSEDES" else "")
-        if claim in claims.get(src, ()):
-            rels.append((t_, a, b, src, extra))
+        if claim not in claims.get(src, ()):
+            continue
+        if kv.get("end") and f"{claim}|ENDS" in claims.get(kv["end"], ()) and t >= kv["to"]:
+            continue  # authority ended by a supported passage before t
+        rels.append((t_, a, b, src, extra))
     has = lambda t_, a, b: any(r[0] == t_ and r[1] == a and r[2] == b for r in rels)
     authorized = {(a, b) for t_, a, b, _, _ in rels if t_ == "AUTHORIZED_FOR"}
 

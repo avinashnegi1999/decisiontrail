@@ -20,11 +20,14 @@ def connect(name):
 
 
 def parse_relation(r):
-    """'TYPE a b src [extra]' -> dict. extra is the scope (SUPERSEDES) or start date (OWNED_BY)."""
+    """'TYPE a b src [extra] [k=v ...]' -> dict. Positional extra is the scope (SUPERSEDES)
+    or start date (OWNED_BY); to=/end= mark an authority that ended, per passage `end`."""
     if isinstance(r, dict):
         return r
     t, a, b, src, *extra = r.split()
     d = {"type": t, "a": a, "b": b, "src": src}
+    d.update(x.split("=", 1) for x in extra if "=" in x)
+    extra = [x for x in extra if "=" not in x]
     if extra:
         d["scope" if t == "SUPERSEDES" else "from"] = extra[0]
     return d
@@ -55,9 +58,11 @@ def load(g, fx):
 def add_relation(g, r):
     t = r["type"]
     assert t in RELS, t
-    props = {"SUPERSEDES": "{src:$src, scope:$scope}", "OWNED_BY": "{src:$src, from:$from}"}.get(t, "{src:$src}")
+    props = {"SUPERSEDES": "{src:$src, scope:$scope}", "OWNED_BY": "{src:$src, from:$from}",
+             "AUTHORIZED_FOR": "{src:$src, to:$to, end:$end}"}.get(t, "{src:$src}")
     g.query(f"MATCH (a {{id:$a}}), (b {{id:$b}}) CREATE (a)-[:{t} {props}]->(b)",
-            {"a": r["a"], "b": r["b"], "src": r["src"], "scope": r.get("scope"), "from": r.get("from")})
+            {"a": r["a"], "b": r["b"], "src": r["src"], "scope": r.get("scope"), "from": r.get("from"),
+             "to": r.get("to"), "end": r.get("end")})
 
 
 # Admissible = in effect at $t, applies to scope, addresses a requirement,
@@ -77,6 +82,10 @@ WITH s, r, d, p, b, z, adp, ap
 MATCH (bp:Passage) WHERE bp.id = b.src AND d.id+'|APPROVED_BY|'+p.id IN bp.claims
 WITH s, r, d, p, z, adp, ap, bp
 MATCH (zp:Passage) WHERE zp.id = z.src AND p.id+'|AUTHORIZED_FOR|'+s.id IN zp.claims
+WITH s, r, d, p, z, adp, ap, bp, zp
+// authority that a supported later passage ended no longer counts after its end date
+OPTIONAL MATCH (ze:Passage) WHERE ze.id = z.end AND p.id+'|AUTHORIZED_FOR|'+s.id+'|ENDS' IN ze.claims
+WITH s, r, d, p, adp, ap, bp, zp, ze WHERE ze IS NULL OR $t < z.to
 WITH s, r, d, collect(DISTINCT adp.id) + collect(DISTINCT ap.id) + collect(DISTINCT bp.id) + collect(DISTINCT zp.id) AS ev,
      collect(DISTINCT p.id) AS approvers
 WITH s, collect({d:d, r:r, ev:ev, approvers:approvers}) AS rows

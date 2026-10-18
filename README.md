@@ -1,9 +1,9 @@
 <h1 align="center">DecisionTrail</h1>
 <p align="center">Why does this project currently do this? The answer, with proof.</p>
 
-[![Watch the demo film: Newest is not current. The outdated page is set aside and the approved decision is shown with its sources](docs/hero.png)](https://www.youtube.com/watch?v=Pa6kRGiwNjc)
+[![Watch the demo film: Newest is not current. The outdated page is set aside and the approved decision is shown with its sources](docs/hero.png)](https://youtu.be/oExijE1rNvk)
 
-<p align="center"><b><a href="https://www.youtube.com/watch?v=Pa6kRGiwNjc">▶ Watch the demo film (5.5 min)</a></b></p>
+<p align="center"><b><a href="https://youtu.be/oExijE1rNvk">▶ Watch the demo film (3 min)</a></b></p>
 
 <p align="center"><sub>Graph Hacks · Company Brain · Built on FalkorDB</sub></p>
 
